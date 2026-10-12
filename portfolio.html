@@ -1,0 +1,687 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Welcome Aboard Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Gochi+Hand&display=swap">
+<style>
+/* Layout: a white page with a small Helvetica frame (label + name top left, nav top right, a hairline info strip along the bottom)
+   and one object in the middle: an airplane window with an airport sign, a departures arrow and four boarding passes tucked around it.
+   The object is the navigation. Signage faces use Archivo condensed; everything else is Helvetica. */
+:root {
+  --bg: #ffffff;
+  --paper: #f7f5ef;
+  --ink: #0b0b0a;
+  --mute: #8d8c87;
+  --line: #e4e2dc;
+  --yellow: #ffd60a;
+  --cobalt: #2445d6;
+  --f-ui: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --f-sign: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+  --f-serif: "Instrument Serif", "Times New Roman", serif;
+  --f-hand: "Gochi Hand", "Comic Sans MS", cursive;
+  --f-sans: var(--f-ui);
+  --f-disp: var(--f-sign);
+  --pad: clamp(16px, 2.2vw, 32px);
+  --ease: cubic-bezier(.7, 0, .2, 1);
+  --out: cubic-bezier(.16, 1, .3, 1);
+  --spring: cubic-bezier(.2, .9, .3, 1.15);
+  color-scheme: light;
+}
+@property --s1 { syntax: "<color>"; inherits: true; initial-value: #c9d8ee; }
+@property --s2 { syntax: "<color>"; inherits: true; initial-value: #86a2d6; }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); color: var(--ink); }
+body { margin: 0; font-family: var(--f-ui); font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 3px; }
+.lbl { font-size: 10.5px; line-height: 1.3; text-transform: uppercase; letter-spacing: .02em; color: var(--mute); }
+.val { font-size: 11.5px; line-height: 1.35; text-transform: uppercase; letter-spacing: .01em; }
+.mono { font-family: var(--f-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; line-height: 1.3; }
+.bars { background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 8px, currentColor 8px 11px, transparent 11px 13px); background-size: 26px 100%; }
+.gfx svg { width: 100%; height: 100%; display: block; }
+.art { background-color: var(--c1); color: var(--c2); position: relative; overflow: hidden; }
+.art::before { content: ""; position: absolute; inset: 0; }
+.art-a::before { background: repeating-radial-gradient(circle at 72% 72%, var(--c2) 0 5px, transparent 5px 15px); }
+.art-b::before { background: repeating-linear-gradient(-32deg, var(--c2) 0 9px, transparent 9px 24px); }
+.art-c::before { background: radial-gradient(circle at 30% 38%, var(--c2) 0 28%, transparent 28.5%), linear-gradient(transparent 62%, var(--c2) 62% 66%, transparent 66%); }
+.art-d::before { background: radial-gradient(var(--c2) 2.2px, transparent 2.6px) 0 0 / 13px 13px; }
+
+/* ---------- frame ---------- */
+.hd { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: start; padding: 22px var(--pad) 28px; pointer-events: none; background: linear-gradient(#fff 62%, rgb(255 255 255 / 0)); }
+.hd > * { pointer-events: auto; }
+.hd-name { display: grid; gap: 4px; }
+.hd-name b { font-weight: 500; font-size: clamp(22px, 2.2vw, 30px); line-height: 1; letter-spacing: -0.01em; text-transform: uppercase; color: var(--ink); }
+.hd-nav { display: grid; justify-items: end; gap: 3px; }
+.hd-nav button { font-size: 11px; text-transform: uppercase; letter-spacing: .02em; color: var(--mute); transition: color .2s; }
+.hd-nav button:hover, .hd-nav button[aria-current="true"] { color: var(--ink); }
+.hd-nav sup { font-size: 8px; margin-left: 2px; }
+
+.home { position: relative; height: max(640px, 100vh); overflow: hidden; }
+.stage { position: absolute; inset: 96px var(--pad) 118px; }
+.cluster { --k: 1; --ox: 0px; position: absolute; left: 50%; top: 50%; width: 820px; height: 640px; transform: translate(calc(-50% + var(--ox)), -50%) scale(var(--k)); }
+.ft { position: absolute; left: var(--pad); right: var(--pad); bottom: 22px; display: grid; grid-template-columns: repeat(4, minmax(0, 210px)) 1fr; gap: 0 18px; align-items: end; }
+.ft > div { border-top: 1px solid var(--line); padding-top: 9px; display: grid; gap: 3px; min-width: 0; }
+.ft .clock { border: 0; justify-self: end; text-align: right; }
+.ft .val b { font-weight: 500; }
+
+/* ---------- the window ---------- */
+.win { position: absolute; left: 292px; top: 112px; width: 236px; height: 364px; border-radius: 999px; z-index: 4; background: radial-gradient(120% 80% at 30% 15%, #ffffff 0%, #f3f2ee 45%, #d6d5cf 100%); box-shadow: inset 0 0 0 1px rgb(0 0 0 / .07), inset 0 2px 0 #fff, inset 0 -6px 12px rgb(0 0 0 / .08), 0 1px 1px rgb(0 0 0 / .06), 0 14px 22px -10px rgb(0 0 0 / .18), 0 40px 70px -30px rgb(0 0 0 / .28); cursor: pointer; }
+.win-ring { position: absolute; inset: 14px; border-radius: 999px; background: conic-gradient(from 210deg, #f7f7f5, #a3a29d 12%, #fbfbf9 24%, #7e7d78 38%, #efeeea 52%, #b2b1ac 66%, #fdfdfb 80%, #8f8e89 92%, #f7f7f5); box-shadow: 0 0 0 1px rgb(0 0 0 / .08); }
+.glass { position: absolute; inset: 22px; border-radius: 999px; overflow: hidden; background: linear-gradient(var(--s1), var(--s2)); transition: --s1 1s, --s2 1s; box-shadow: inset 0 8px 18px rgb(0 0 0 / .4), inset 0 -4px 10px rgb(0 0 0 / .12), inset 0 0 0 1.5px rgb(0 0 0 / .28); }
+.glare { position: absolute; inset: 0; z-index: 4; pointer-events: none; background: linear-gradient(118deg, rgb(255 255 255 / .38) 0 14%, rgb(255 255 255 / .06) 15% 26%, transparent 27%), linear-gradient(118deg, transparent 0 30%, rgb(255 255 255 / .14) 31% 34%, transparent 35%); }
+.scene { position: absolute; inset: 0; opacity: 0; transition: opacity .8s; }
+.scene.on { opacity: 1; }
+.scene svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.clouds { position: absolute; inset: 0; transition: opacity .8s; }
+.cloud { position: absolute; display: block; height: 8px; border-radius: 8px; background: #fff; animation: drift linear infinite; }
+.cloud::after { content: ""; position: absolute; left: 22%; bottom: 5px; width: 46%; height: 8px; border-radius: 8px; background: #fff; }
+.cloud:nth-child(1) { top: 36%; width: 58px; animation-duration: 17s; }
+.cloud:nth-child(2) { top: 54%; width: 84px; animation-duration: 25s; animation-delay: -9s; }
+.cloud:nth-child(3) { top: 68%; width: 46px; animation-duration: 20s; animation-delay: -4s; }
+.cloud:nth-child(4) { top: 24%; width: 36px; animation-duration: 29s; animation-delay: -15s; opacity: .85; }
+@keyframes drift { from { left: 115%; } to { left: -70%; } }
+.shade { position: absolute; left: 0; right: 0; top: 0; height: 12%; z-index: 3; background: repeating-linear-gradient(#f3f2ee 0 6px, #dedcd5 6px 7px); box-shadow: 0 2px 4px rgb(0 0 0 / .18); transition: height 1s var(--ease); }
+.win.shut .shade { height: 88% !important; }
+
+/* ---------- signs ---------- */
+.sign { position: absolute; z-index: 6; filter: drop-shadow(0 1px 1px rgb(0 0 0 / .1)) drop-shadow(0 12px 14px rgb(0 0 0 / .16)); pointer-events: none; }
+.sign-y { left: 96px; top: 54px; rotate: -9deg; }
+.sign-y .face { position: relative; width: 318px; height: 98px; border-radius: 7px; background: linear-gradient(170deg, #ffe14a, var(--yellow) 40%, #f2c800); border: 3.5px solid #151513; box-shadow: inset 0 2px 0 rgb(255 255 255 / .45), inset 0 -3px 0 rgb(0 0 0 / .12); display: grid; grid-template-columns: 54px 1fr; align-items: center; gap: 12px; padding: 0 22px 0 18px; color: #121210; }
+.sign-y svg { width: 54px; height: 54px; }
+.sign-y b { display: block; font-family: var(--f-sign); font-weight: 850; font-stretch: 72%; font-size: 36px; line-height: .88; letter-spacing: -0.01em; text-transform: uppercase; }
+.sign-y small { display: block; font-family: var(--f-sign); font-weight: 700; font-stretch: 80%; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; margin-top: 5px; }
+.bolt { position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff, #9a9993 60%, #5e5d58); box-shadow: 0 0 0 1px rgb(0 0 0 / .3); }
+.bolt.l { left: 6px; } .bolt.r { right: 6px; }
+.sign-b { left: 318px; top: 506px; rotate: 5deg; }
+.sign-b .face { position: relative; width: 300px; height: 62px; background: var(--cobalt); clip-path: polygon(0 0, calc(100% - 34px) 0, 100% 50%, calc(100% - 34px) 100%, 0 100%); display: flex; align-items: center; gap: 12px; padding: 0 46px 0 18px; color: #fff; font-family: var(--f-sign); font-weight: 850; font-stretch: 72%; font-size: 26px; letter-spacing: -0.005em; text-transform: uppercase; white-space: nowrap; }
+.sign-b .face::before { content: ""; position: absolute; inset: 4px; clip-path: polygon(0 0, calc(100% - 32px) 0, 100% 50%, calc(100% - 32px) 100%, 0 100%); border: 2px solid rgb(255 255 255 / .9); pointer-events: none; }
+.sign-b .face i { font-style: normal; font-weight: 700; font-size: 13px; letter-spacing: .04em; opacity: .85; }
+
+/* ---------- boarding passes ---------- */
+.vt-pos { position: absolute; left: var(--x); top: var(--y); z-index: var(--z); rotate: var(--r); filter: drop-shadow(0 1px 1px rgb(0 0 0 / .08)) drop-shadow(0 10px 12px rgb(0 0 0 / .12)) drop-shadow(0 26px 30px rgb(0 0 0 / .08)); transition: opacity .4s, filter .4s; }
+.vt-pos:hover, .vt-pos:focus-within { z-index: 30; }
+.vt::after { content: ""; position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; transition: opacity .4s; }
+.cluster:has(.vt-pos:hover) .vt-pos:not(:hover) .vt::after { opacity: .5; }
+.vt { --ink: #121210; position: relative; width: 178px; height: 304px; display: grid; grid-template-rows: minmax(0, 1fr) 82px; text-align: left; transition: transform .6s var(--spring); -webkit-mask: radial-gradient(circle 9px at 0 calc(100% - 82px), #0000 98%, #000), radial-gradient(circle 9px at 100% calc(100% - 82px), #0000 98%, #000); -webkit-mask-composite: source-in; mask: radial-gradient(circle 9px at 0 calc(100% - 82px), #0000 98%, #000), radial-gradient(circle 9px at 100% calc(100% - 82px), #0000 98%, #000); mask-composite: intersect; }
+.vt:hover, .vt:focus-visible { transform: translate(var(--hx), var(--hy)) rotate(var(--hr)) scale(1.06); }
+.vt-body, .vt-stub { position: relative; overflow: hidden; background: var(--paper); color: var(--ink); isolation: isolate; transition: color .4s; }
+.vt-body { border-radius: 10px 10px 0 0; padding: 13px 14px 12px; display: grid; grid-template-rows: auto auto auto auto minmax(0, 1fr) auto; gap: 7px; }
+.vt-stub { border-radius: 0 0 10px 10px; border-top: 1.5px dashed rgb(18 18 16 / .28); transition: color .4s, border-color .4s; }
+.vt-body::before, .vt-stub::before { content: ""; position: absolute; inset: 0; z-index: -1; transform: scaleY(0); transform-origin: 50% 0; transition: transform .55s var(--ease); }
+.vt-body::before { background: var(--t1); }
+.vt-stub::before { background: var(--t2); transition-delay: .07s; }
+.vt:hover .vt-body::before, .vt:focus-visible .vt-body::before, .vt:hover .vt-stub::before, .vt:focus-visible .vt-stub::before { transform: scaleY(1); }
+.vt:hover .vt-body, .vt:focus-visible .vt-body { color: var(--ton); }
+.vt:hover .vt-stub, .vt:focus-visible .vt-stub { color: var(--son); border-color: transparent; }
+.vt-row { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; }
+.vt-title { font-family: var(--f-sign); font-weight: 850; font-stretch: 72%; font-size: 31px; line-height: .86; letter-spacing: -0.015em; text-transform: uppercase; }
+.vt-sum { font-size: 11.5px; line-height: 1.35; opacity: .8; }
+.vt-info { display: flex; justify-content: space-between; gap: 8px; white-space: nowrap; min-width: 0; font-family: var(--f-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: .04em; border-top: 1px solid currentColor; padding-top: 6px; }
+.vt-gfx { border-radius: 5px; overflow: hidden; min-height: 0; opacity: 0; filter: grayscale(1); transition: opacity .5s .08s, filter .5s; }
+.vt:hover .vt-gfx, .vt:focus-visible .vt-gfx { opacity: 1; filter: none; }
+.vt-cta { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; transition: opacity .3s, transform .45s var(--ease); }
+.vt-prev { position: absolute; inset: 10px 10px 30px; border-radius: 5px; transform: translateY(-160%); opacity: 0; transition: transform .6s var(--spring) .1s, opacity .2s .1s; }
+.vt-foot { position: absolute; left: 10px; right: 10px; bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-family: var(--f-mono); font-size: 9px; opacity: 0; transition: opacity .3s .2s; }
+.vt-foot .bars { width: 84px; height: 12px; }
+.vt:hover .vt-cta, .vt:focus-visible .vt-cta { opacity: 0; transform: translateY(14px); }
+.vt:hover .vt-prev, .vt:focus-visible .vt-prev { transform: none; opacity: 1; }
+.vt:hover .vt-foot, .vt:focus-visible .vt-foot { opacity: 1; }
+.m-list { display: none; }
+
+/* ---------- intro (GSAP) ---------- */
+.intro { position: fixed; inset: 0; z-index: 100; cursor: pointer; }
+.intro .half { position: absolute; left: 0; right: 0; height: 50%; background: #070707; overflow: hidden; will-change: transform; }
+.intro .half.top { top: 0; } .intro .half.bot { bottom: 0; }
+.intro .msg { position: absolute; left: 0; right: 0; text-align: center; color: #f4f3ef; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.intro .half.top .msg { bottom: 0; transform: translateY(50%); }
+.intro .half.bot .msg { top: 0; transform: translateY(-50%); }
+.intro .cut { position: absolute; left: 0; right: 0; top: 50%; height: 1px; margin-top: -.5px; background: #f4f3ef; transform: scaleX(0); z-index: 2; }
+
+/* ---------- project pop-up ---------- */
+.mdl { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 24px; }
+.mdl-back { position: absolute; inset: 0; background: rgb(255 255 255 / .72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); animation: fade .3s; }
+@keyframes fade { from { opacity: 0; } }
+.mdl-card { position: relative; width: min(940px, 100%); max-height: 100%; overflow: auto; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); background: var(--paper); color: var(--ink); border-radius: 14px; animation: pop .55s var(--out); box-shadow: 0 1px 1px rgb(0 0 0 / .06), 0 30px 60px -20px rgb(0 0 0 / .3); }
+@keyframes pop { from { opacity: 0; transform: translateY(24px) scale(.98); } }
+.mdl-img { min-height: 420px; border-radius: 14px 0 0 14px; }
+.mdl-img .tag { position: absolute; left: 16px; bottom: 14px; z-index: 1; background: var(--paper); color: var(--ink); padding: 3px 8px; border-radius: 4px; }
+.mdl-body { padding: 26px 30px 26px; display: grid; gap: 16px; align-content: start; border-left: 1.5px dashed rgb(18 18 16 / .28); }
+.mdl-top { display: flex; justify-content: space-between; align-items: center; color: var(--mute); }
+.mdl-x { font-size: 18px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; }
+.mdl-body h3 { margin: 0; font-family: var(--f-sign); font-weight: 850; font-stretch: 72%; text-transform: uppercase; font-size: clamp(40px, 5vw, 64px); letter-spacing: -0.01em; line-height: .86; }
+.mdl-lead { margin: 0; font-size: 16px; color: #3c3b37; }
+.mdl-dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; padding: 14px 0; border-block: 1px solid var(--line); }
+.mdl-dl dt { font-size: 10.5px; text-transform: uppercase; color: var(--mute); }
+.mdl-dl dd { margin: 0; font-size: 14px; }
+.mdl-ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; color: #3c3b37; }
+.mdl-body h4 { margin: 0; }
+.mdl-act { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding-top: 4px; }
+.mdl-cta { background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 999px; font-size: 13px; }
+.mdl-nav { display: flex; gap: 6px; }
+.mdl-nav button { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); }
+
+/* ---------- pages ---------- */
+.page { padding: 120px var(--pad) 80px; animation: pageIn .5s var(--out); }
+@keyframes pageIn { from { opacity: 0; translate: 0 12px; } }
+.page-h { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 34px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.page-h h2 { margin: 0; font-weight: 500; text-transform: uppercase; font-size: clamp(48px, 8vw, 120px); letter-spacing: -0.035em; line-height: .86; }
+.page-h p { margin: 0; max-width: 40ch; color: var(--mute); }
+
+/* bank cards */
+.bk { --cw: 100%; width: var(--cw); aspect-ratio: 1.586; border-radius: 12px; background: var(--cc); color: var(--ct); padding: 12px 14px; display: grid; grid-template-rows: auto 1fr auto; font-family: var(--f-mono); font-size: 11px; position: relative; overflow: hidden; box-shadow: 0 1px 0 rgb(255 255 255 / .25) inset, 0 14px 24px -16px rgb(0 0 0 / .55); transition: transform .4s var(--out), box-shadow .4s, margin .45s var(--ease); text-align: left; }
+.bk::before { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgb(255 255 255 / .22), transparent 38%, transparent 62%, rgb(255 255 255 / .08)); pointer-events: none; }
+.bk-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.bk-top b { font-family: var(--f-sans); font-weight: 650; font-size: 15px; letter-spacing: -0.02em; }
+.bk-mid { display: flex; align-items: center; gap: 10px; }
+.bk-chip { width: 30px; height: 22px; border-radius: 4px; background: linear-gradient(135deg, #ecd796, #b69545); box-shadow: inset 0 0 0 1px rgb(0 0 0 / .15); }
+.bk-wave { width: 16px; height: 16px; opacity: .8; }
+.bk-num { font-size: 12.5px; letter-spacing: .12em; }
+.bk-name { font-family: var(--f-sans); font-size: 12.5px; font-weight: 500; display: flex; justify-content: space-between; margin-top: 2px; }
+.bk.tap { animation: tap .55s var(--out); }
+@keyframes tap { 40% { transform: translateY(-14px) rotate(-2deg) scale(1.03); } }
+
+/* receipt printer */
+.printer { display: grid; justify-items: center; width: 300px; }
+.printer-slot { width: 100%; height: 14px; border-radius: 7px; background: #1d1d1c; box-shadow: inset 0 -4px 0 #000, 0 6px 14px -6px rgb(0 0 0 / .4); }
+.paper-wrap { width: 272px; margin-top: -7px; overflow: hidden; height: 0; }
+.receipt { --rink: #222; width: 272px; background: #fafaf8; color: var(--rink); font-family: var(--f-serif); padding: 26px 22px 30px; text-align: center; position: relative; box-shadow: 0 16px 30px -18px rgb(0 0 0 / .35); -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 8px repeat-x; mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 8px repeat-x; }
+.receipt .logo { width: 30px; height: 26px; margin: 0 auto 6px; background: var(--rink); border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; clip-path: polygon(0 0, 100% 0, 100% 78%, 60% 70%, 40% 70%, 0 78%); }
+.receipt h3 { margin: 0; font-weight: 400; font-size: 38px; line-height: 1; }
+.receipt .tag { display: inline-block; margin: 12px 0 8px; background: #c7dbff; padding: 0 4px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+.receipt .small { font-size: 12px; letter-spacing: .05em; text-transform: uppercase; line-height: 1.35; }
+.receipt .row { display: flex; justify-content: space-between; gap: 10px; text-align: left; font-size: 17px; line-height: 1.6; }
+.receipt .row.small { font-size: 12px; line-height: 1.6; }
+.receipt .stars { overflow: hidden; white-space: nowrap; font-size: 11px; letter-spacing: .3em; margin: 6px 0; opacity: .85; }
+.receipt .thanks { margin: 18px 0 2px; font-size: 16px; }
+.receipt .r-note { font-family: var(--f-hand); color: #1f45e0; font-size: 22px; transform: rotate(-3deg); display: inline-block; }
+.receipt .r-x { position: absolute; right: 10px; top: 8px; font-family: var(--f-mono); font-size: 13px; color: #999; }
+
+/* wallet */
+.wl { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 40px; align-items: start; }
+.wl-stack { position: sticky; top: 120px; display: flex; flex-direction: column; }
+.wl-stack .bk + .bk { margin-top: -128px; }
+.wl-stack .bk.on + .bk { margin-top: 14px; }
+.wl-stack .bk:not(.on):hover { transform: translateY(-10px); }
+.wl-stack .bk.on { transform: translateX(10px); box-shadow: 0 0 0 2px var(--ink), 0 22px 30px -18px rgb(0 0 0 / .6); }
+.wl-hint { margin-top: 18px; color: var(--mute); }
+.wl-detail { min-width: 0; display: grid; gap: 22px; animation: pageIn .45s var(--out); }
+.wl-h { display: grid; gap: 6px; }
+.wl-h h3 { margin: 0; font-weight: 600; font-size: clamp(32px, 4vw, 48px); letter-spacing: -0.05em; line-height: 1; }
+.wl-h p { margin: 0; max-width: 60ch; color: #45443f; }
+.wl-h .links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.wl-h .links span { border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+.wl-body { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 28px; align-items: start; }
+.wl-gal { columns: 3 150px; column-gap: 12px; }
+.wl-th { display: block; width: 100%; margin: 0 0 12px; break-inside: avoid; border-radius: 8px; transition: transform .35s var(--spring), box-shadow .35s; }
+.wl-th:hover, .wl-th:focus-visible { transform: translateY(-3px); box-shadow: 0 14px 22px -14px rgb(0 0 0 / .5); }
+.wl-th .n { position: absolute; left: 8px; bottom: 6px; z-index: 1; background: var(--paper); color: var(--ink); padding: 0 5px; border-radius: 3px; }
+.wl-galhead { display: flex; justify-content: space-between; color: var(--mute); margin-bottom: 10px; }
+.lb { position: fixed; inset: 0; z-index: 80; background: rgb(14 14 13 / .97); color: #f2f1ec; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: 18px 24px; animation: fade .25s; }
+.lb-top, .lb-bot { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.lb-stage { display: grid; grid-template-columns: 48px minmax(0, 1fr) 48px; align-items: center; gap: 16px; min-height: 0; padding: 16px 0; }
+.lb-img { justify-self: center; max-height: 100%; max-width: 100%; height: 100%; border-radius: 6px; animation: pop .35s var(--spring); }
+.lb-stage > button, .lb-top button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgb(255 255 255 / .3); font-size: 18px; }
+.lb-strip { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.lb-strip button { flex: 0 0 auto; width: 44px; height: 32px; border-radius: 4px; opacity: .45; }
+.lb-strip button[aria-current="true"] { opacity: 1; outline: 2px solid #f2f1ec; outline-offset: 2px; }
+
+/* ID */
+.idp { display: grid; grid-template-columns: minmax(0, 560px) minmax(0, 1fr); gap: 48px; align-items: start; perspective: 1200px; }
+.idcard { aspect-ratio: 1.586; border-radius: 18px; background: linear-gradient(135deg, #f6f4ee, #dfe4ef 60%, #ead9d2); color: #1d2235; padding: 22px 24px; display: grid; grid-template-columns: 34% 1fr; grid-template-rows: auto 1fr auto; gap: 10px 22px; font-family: var(--f-mono); font-size: 11px; box-shadow: 0 30px 50px -30px rgb(30 30 60 / .55), inset 0 0 0 1px rgb(255 255 255 / .6); position: relative; overflow: hidden; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .2s; }
+.idcard::before { content: ""; position: absolute; inset: 0; background: repeating-radial-gradient(circle at 80% 20%, rgb(80 90 160 / .07) 0 1px, transparent 1px 7px); pointer-events: none; }
+.idcard::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / .55) 45%, transparent 60%); transform: translateX(var(--sh, -40%)); pointer-events: none; mix-blend-mode: soft-light; }
+.idcard header { grid-column: 1 / -1; display: flex; justify-content: space-between; letter-spacing: .12em; text-transform: uppercase; }
+.idcard header b { font-family: var(--f-sans); font-weight: 650; letter-spacing: -0.01em; font-size: 15px; text-transform: none; }
+.id-photo { border-radius: 10px; background: repeating-linear-gradient(-45deg, #c9cfdf 0 6px, #d6dbe8 6px 12px); display: grid; place-items: center; color: #6a7190; font-size: 10px; letter-spacing: .12em; }
+.id-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; align-content: start; }
+.id-fields div { display: grid; }
+.id-fields small { font-size: 9px; opacity: .6; letter-spacing: .1em; text-transform: uppercase; }
+.id-fields span { font-family: var(--f-sans); font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
+.id-fields .wide { grid-column: 1 / -1; }
+.id-mrz { grid-column: 1 / -1; font-size: 12.5px; letter-spacing: .14em; opacity: .75; white-space: nowrap; overflow: hidden; }
+.bio { display: grid; gap: 20px; }
+.bio p { margin: 0; font-size: clamp(19px, 2vw, 24px); line-height: 1.3; letter-spacing: -0.02em; }
+.bio dl { margin: 0; display: grid; grid-template-columns: 120px 1fr; gap: 8px 16px; font-family: var(--f-mono); font-size: 12px; border-top: 1px solid var(--line); padding-top: 16px; }
+.bio dt { color: var(--mute); text-transform: uppercase; }
+.bio dd { margin: 0; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1100px) {
+  .wl { grid-template-columns: 1fr; }
+  .wl-stack { position: static; flex-direction: row; overflow-x: auto; padding: 4px 4px 14px; gap: 12px; }
+  .wl-stack .bk { --cw: 220px; flex: 0 0 auto; }
+  .wl-stack .bk + .bk, .wl-stack .bk.on + .bk { margin-top: 0; }
+  .wl-stack .bk.on { transform: translateY(-6px); }
+  .wl-body { grid-template-columns: 1fr; justify-items: center; }
+  .wl-gal { width: 100%; }
+  .ft { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 12px; }
+  .ft .clock { display: none; }
+}
+@media (max-width: 720px) {
+  .home { height: auto; overflow: hidden; padding-top: 96px; }
+  .stage { position: relative; inset: auto; height: 400px; margin: 0 var(--pad) 12px; }
+  .cluster .vt-pos { display: none; }
+  .m-list { display: grid; grid-template-columns: repeat(2, minmax(0, 178px)); justify-content: center; gap: 22px 16px; padding: 10px var(--pad) 36px; }
+  .m-list .vt-pos { position: static; rotate: 0deg; }
+  .ft { position: static; grid-template-columns: 1fr 1fr; padding: 0 var(--pad) 28px; }
+  .ft > div:nth-child(4) { grid-column: 1 / -1; }
+  .mdl-card, .idp { grid-template-columns: 1fr; }
+  .mdl-img { min-height: 200px; border-radius: 14px 14px 0 0; }
+  .mdl-body { border-left: 0; border-top: 1.5px dashed rgb(18 18 16 / .28); }
+  .mdl { padding: 10px; }
+  .mdl-dl { grid-template-columns: 1fr; }
+}
+@media (max-width: 400px) { .m-list { grid-template-columns: minmax(0, 178px); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01s !important; transition-delay: 0s !important; }
+}
+</style>
+
+<header class="hd" id="hd">
+  <button class="hd-name" data-go="home"><span class="lbl">Designer &amp; developer</span><b>Eileen Zhang</b></button>
+  <nav class="hd-nav" aria-label="Main">
+    <button data-go="home" aria-current="true">Flights<sup>04</sup></button>
+    <button data-go="wallet">Wallet<sup>05</sup></button>
+    <button data-go="id">ID</button>
+  </nav>
+</header>
+
+<main class="home" id="home">
+  <div class="stage" id="stage">
+    <div class="cluster" id="cluster">
+      <div class="sign sign-y" aria-hidden="true">
+        <div class="face"><i class="bolt l"></i><i class="bolt r"></i>
+          <svg viewBox="0 0 54 54"><g transform="rotate(45 27 27)"><path fill="#121210" d="M27 5c2.2 0 3.4 2.2 3.4 4.6v11.6l17.6 10v5.4l-17.6-5.2v9.6l5 3.8v4.4l-8.4-2.2-8.4 2.2v-4.4l5-3.8v-9.6L6 36.4V31l17.6-10V9.6C23.6 7.2 24.8 5 27 5z"/></g></svg>
+          <span><b>Welcome aboard</b><small>Gates A1 – B2 · Flight EZ 2026</small></span>
+        </div>
+      </div>
+      <div class="win" id="win" role="img" aria-label="Airplane window. Hover a boarding pass to change the view.">
+        <i class="win-ring"></i>
+        <span class="glass">
+          <span class="clouds" id="clouds"><i class="cloud"></i><i class="cloud"></i><i class="cloud"></i><i class="cloud"></i></span>
+          <span id="scenes"></span>
+          <span class="shade" id="shade"></span>
+          <i class="glare"></i>
+        </span>
+      </div>
+      <div class="sign sign-b" aria-hidden="true"><div class="face">Departures <i>04 flights</i></div></div>
+      <div id="passes"></div>
+    </div>
+  </div>
+  <div class="m-list" id="m-list"></div>
+  <footer class="ft">
+    <div><span class="lbl">Base</span><span class="val">Placeholder city</span></div>
+    <div><span class="lbl">Focus</span><span class="val">Product design / interfaces / code</span></div>
+    <div><span class="lbl">Index</span><span class="val">Portfolio 2026 · 04 flights</span></div>
+    <div><span class="lbl">Status</span><span class="val" id="status">Cruising altitude</span></div>
+    <div class="clock"><span class="lbl">Local time</span><span class="val" id="clock">--:--</span></div>
+  </footer>
+</main>
+
+<div class="intro" id="intro" hidden aria-hidden="true">
+  <div class="half top"><div class="msg">Welcome aboard — Flight EZ 2026</div></div>
+  <div class="half bot"><div class="msg">Welcome aboard — Flight EZ 2026</div></div>
+  <i class="cut"></i>
+</div>
+<div id="page" hidden></div>
+<div class="mdl" id="mdl" hidden></div>
+<div class="lb" id="lb" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script>
+/* ---------------- Data (placeholders) ---------------- */
+const P = [
+  { id: "p1", n: "01", title: "Project One", kind: "Product design", year: "2026", role: "Lead designer", desc: "One-line summary of the project and its outcome.", art: "a", c1: "#2546d0", c2: "#f4c430", t1: "#2546d0", ton: "#ffffff", t2: "#f4c430", son: "#14205e", gfx: "waves", scene: "coast", place: "Coast at dusk", code: "SEA", gate: "A1",
+    pos: { x: 521, y: 84, r: 8, z: 3, hx: 34, hy: -22, hr: -6 } },
+  { id: "p2", n: "02", title: "Project Two", kind: "Brand & web", year: "2025", role: "Designer + dev", desc: "One-line summary of the project and its outcome.", art: "b", c1: "#8fbf5a", c2: "#24331a", t1: "#9cc767", ton: "#141c0e", t2: "#24331a", son: "#d9f0bd", gfx: "bars", scene: "dunes", place: "Desert dunes", code: "DUN", gate: "A2",
+    pos: { x: 614, y: 236, r: 15, z: 5, hx: 26, hy: -8, hr: -11 } },
+  { id: "p3", n: "03", title: "Project Three", kind: "Design system", year: "2025", role: "Systems design", desc: "One-line summary of the project and its outcome.", art: "c", c1: "#161616", c2: "#efe9dc", t1: "#161616", ton: "#efe9dc", t2: "#efe9dc", son: "#161616", gfx: "grid", scene: "peaks", place: "Snow peaks", code: "ALP", gate: "B1",
+    pos: { x: 116, y: 200, r: -8, z: 3, hx: -30, hy: -16, hr: 6 } },
+  { id: "p4", n: "04", title: "Project Four", kind: "Interaction study", year: "2024", role: "Solo", desc: "One-line summary of the project and its outcome.", art: "d", c1: "#1f9a73", c2: "#ece9f6", t1: "#ece9f6", ton: "#161616", t2: "#1f9a73", son: "#ece9f6", gfx: "blobs", scene: "city", place: "City at night", code: "CTY", gate: "B2",
+    pos: { x: 14, y: 318, r: -16, z: 5, hx: -24, hy: -6, hr: 11 } }
+];
+const E = [
+  { id: "e1", n: "01", title: "Type Study", kind: "Typeface experiment", cc: "#3846a8", ct: "#e9ecff", made: "MAR 2026", client: "Personal", tools: "Figma, Glyphs", hours: 14, iters: 9, coffee: 5, imgs: 6, note: "This one is on me :)", desc: "Placeholder: a display typeface drawn from airport signage. Six specimen sheets." },
+  { id: "e2", n: "02", title: "Shader Toy", kind: "Generative code", cc: "#c4583c", ct: "#fff1e8", made: "JAN 2026", client: "Personal", tools: "three.js, GLSL", hours: 22, iters: 31, coffee: 11, imgs: 4, note: "Worth every bug.", desc: "Placeholder: a small shader study. Stills from four of the variations.", link: "Open live demo ↗" },
+  { id: "e3", n: "03", title: "Tiny Tool", kind: "Web tool", cc: "#d9d6cd", ct: "#26251f", made: "NOV 2025", client: "Personal", tools: "Svelte", hours: 9, iters: 4, coffee: 3, imgs: 3, note: "Made in one weekend!", desc: "Placeholder: a one-weekend utility. Three screenshots and a link to try it.", link: "Try the tool ↗" },
+  { id: "e4", n: "04", title: "Printed Zine", kind: "Print", cc: "#5e7a4c", ct: "#eef4e2", made: "AUG 2025", client: "Self-published", tools: "InDesign, Risograph", hours: 30, iters: 6, coffee: 14, imgs: 8, note: "Ink still drying", desc: "Placeholder: a 16-page risograph zine. Eight spreads." },
+  { id: "e5", n: "05", title: "Art Commissions", kind: "Digital illustration", cc: "#1d1c22", ct: "#f2e19a", made: "2024–2026", client: "Various clients", tools: "Procreate, Photoshop", hours: 120, iters: 12, coffee: 40, imgs: 12, note: "Thank you, clients!", desc: "Placeholder: twelve commissioned pieces. Click any piece to view it large." }
+];
+const SKY = { sky: ["#c9d8ee", "#86a2d6"], coast: ["#e88f97", "#ffd8a8"], dunes: ["#f4ad78", "#fde8c6"], peaks: ["#7aa3bd", "#e4eff1"], city: ["#0d0b24", "#2d2f66"] };
+const artVars = p => `--c1:${p.c1};--c2:${p.c2}`;
+const tkVars = p => `${artVars(p)};--t1:${p.t1};--ton:${p.ton};--t2:${p.t2};--son:${p.son}`;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+
+/* ---------------- helpers ---------------- */
+const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+function flap(el, text, delay = 0, html, per = 22) {
+  if (reduce) { el[html ? "innerHTML" : "textContent"] = html || text; return; }
+  const start = performance.now() + delay, token = (el._flap = (el._flap || 0) + 1);
+  (function tick(now) {
+    if (el._flap !== token) return;
+    const k = now - start;
+    if (k < 0) { requestAnimationFrame(tick); return; }
+    let out = "";
+    for (let i = 0; i < text.length; i++) out += (" —·".includes(text[i]) || k > i * per + 180) ? text[i] : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+    el.textContent = out;
+    if (k < text.length * per + 220) requestAnimationFrame(tick); else el[html ? "innerHTML" : "textContent"] = html || text;
+  })(performance.now());
+}
+const flapAll = root => root.querySelectorAll("[data-flap]").forEach((el, i) => flap(el, el.dataset.flap, i * 60));
+const clock = () => { const c = $("clock"); if (c) c.textContent = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }); };
+clock(); setInterval(clock, 20000);
+
+/* ticket graphics, after the reference tickets */
+function gfx(p) {
+  const W = 300, H = 120;
+  let s = parseInt(p.n, 10) * 97; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  let inner = "";
+  if (p.gfx === "waves") {
+    for (let k = 0; k < 9; k++) { let d = ""; for (let x = 0; x <= W; x += 6) { const y = 8 + k * 13 + Math.sin(x / 32 + k * 0.45) * 7 * Math.sin(k * 0.3 + 1.1) + Math.sin(x / 12 + k) * 2; d += (x ? "L" : "M") + x + " " + y.toFixed(1); } inner += `<path d="${d}"/>`; }
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="${p.ton}" stroke-width="4.5" stroke-linecap="round">${inner}</g></svg>`;
+  }
+  if (p.gfx === "bars") {
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 10; c++) { const x = c * 32 + (r % 2) * 16, y = r * 30 + 2; inner += `<rect x="${x}" y="${y}" width="10" height="32" rx="5" transform="rotate(-38 ${x + 5} ${y + 16})"/>`; }
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><g fill="${p.t2}">${inner}</g></svg>`;
+  }
+  if (p.gfx === "grid") {
+    for (let g = 0; g < 3; g++) for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) { const on = rnd() < 0.3; inner += `<rect x="${10 + g * 100 + c * 21}" y="${8 + r * 27}" width="14" height="14" fill="${on ? p.ton : "none"}" stroke="${p.ton}" stroke-width="2"/>`; }
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">${inner}</svg>`;
+  }
+  const cols = ["#1f9a73", "#a993f0", "#e8db5a"];
+  const on = (x, y) => Math.sin(x * 0.75) + Math.cos(y * 0.95) + Math.sin((x + y) * 0.45) > 0.55;
+  for (let y = 0; y < 5; y++) for (let x = 0; x < 13; x++) {
+    if (!on(x, y)) continue;
+    const cx = 14 + x * 24, cy = 14 + y * 24, col = (x * 3 + y * 5) % 7 < 4 ? cols[0] : cols[1 + (x + y) % 2];
+    inner += `<circle cx="${cx}" cy="${cy}" r="11" fill="${col}"/>`;
+    if (x < 12 && on(x + 1, y)) inner += `<rect x="${cx}" y="${cy - 7}" width="24" height="14" fill="${col}"/>`;
+    if (y < 4 && on(x, y + 1)) inner += `<rect x="${cx - 7}" y="${cy}" width="14" height="24" fill="${col}"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">${inner}</svg>`;
+}
+
+/* destination views for the window: flat vector, one per project */
+function sceneSVG(id) {
+  const v = `viewBox="0 0 200 330" preserveAspectRatio="xMidYMax slice"`;
+  if (id === "coast") {
+    let waves = "";
+    for (let i = 0; i < 8; i++) { const y = 228 + i * 13; waves += `<path d="M-10 ${y} q 15 -4 30 0 t 30 0 t 30 0 t 30 0 t 30 0 t 30 0 t 30 0 t 30 0" stroke="#a8b8f0" stroke-width="${1.2 + i * 0.25}" fill="none"/>`; }
+    return `<svg ${v}><circle cx="100" cy="206" r="40" fill="#fff2d8"/><rect x="0" y="220" width="200" height="110" fill="#3445a8"/>${waves}<g fill="#ffe2b2"><rect x="86" y="232" width="28" height="3" rx="1.5"/><rect x="80" y="246" width="40" height="3" rx="1.5"/><rect x="92" y="262" width="16" height="3" rx="1.5"/></g></svg>`;
+  }
+  if (id === "dunes") return `<svg ${v}><circle cx="140" cy="140" r="22" fill="#fff4dc"/><path d="M0 235 Q50 202 100 226 T200 216 V330 H0Z" fill="#f2bd88"/><path d="M0 266 Q60 232 122 260 T200 250 V330 H0Z" fill="#df8e5a"/><path d="M0 298 Q70 270 140 292 T200 284 V330 H0Z" fill="#b65d3e"/></svg>`;
+  if (id === "peaks") return `<svg ${v}><path d="M-10 270 L40 185 L70 225 L112 150 L150 212 L172 188 L215 270 V330 H-10Z" fill="#7d9eae"/><path d="M40 185 L52 205 L44 202 L36 210 L30 202Z M112 150 L128 177 L118 172 L108 182 L98 173Z M172 188 L182 202 L174 200 L166 204Z" fill="#fff"/><path d="M-10 300 L50 242 L92 280 L150 228 L215 298 V330 H-10Z" fill="#33505b"/><path d="M150 228 L164 242 L154 240 L146 246 L138 240Z M50 242 L60 252 L52 251 L44 256Z" fill="#f2f6f6"/></svg>`;
+  if (id === "city") {
+    let s = 9; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    let stars = "", bld = "", win = "";
+    for (let i = 0; i < 36; i++) stars += `<circle cx="${(rnd() * 200).toFixed(1)}" cy="${(rnd() * 170).toFixed(1)}" r="${(0.5 + rnd()).toFixed(2)}" fill="#fff" opacity="${(0.4 + rnd() * 0.6).toFixed(2)}"/>`;
+    let x = -4;
+    while (x < 204) {
+      const w = 18 + rnd() * 22, h = 70 + rnd() * 110, y = 330 - h;
+      bld += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="#20224a"/>`;
+      for (let gx = x + 4; gx < x + w - 4; gx += 6) for (let gy = y + 6; gy < 322; gy += 8) if (rnd() < 0.42) win += `<rect x="${gx.toFixed(1)}" y="${gy.toFixed(1)}" width="2.6" height="3.4" fill="${rnd() < 0.75 ? "#ffd68e" : "#a8c6ff"}"/>`;
+      x += w + 2;
+    }
+    return `<svg ${v}>${stars}${bld}${win}</svg>`;
+  }
+  return "";
+}
+
+/* ---------------- home: the object ---------------- */
+const home = $("home"), win = $("win"), cluster = $("cluster"), statusEl = $("status");
+$("scenes").innerHTML = P.map(p => `<span class="scene" data-scene="${p.scene}">${sceneSVG(p.scene)}</span>`).join("");
+const passHTML = p => `
+  <button class="vt" data-open="${p.id}" data-sky="${p.id}" style="${tkVars(p)}" aria-label="${p.title}. ${p.desc} Open details">
+    <span class="vt-body">
+      <span class="vt-row"><span>EZ Air</span><span>No. 00${p.n}</span></span>
+      <span class="vt-title">${p.title.replace(" ", "<br>")}</span>
+      <span class="vt-sum">${p.desc}</span>
+      <span class="vt-info"><span style="overflow:hidden;text-overflow:ellipsis">${p.kind}</span><span>${p.year}</span></span>
+      <span class="vt-gfx gfx">${gfx(p)}</span>
+      <span class="vt-info" style="border:0;padding:0"><span>EZ → ${p.code}</span><span>Gate ${p.gate}</span></span>
+    </span>
+    <span class="vt-stub">
+      <span class="vt-cta">View case study ↗</span>
+      <span class="vt-prev art art-${p.art}"></span>
+      <span class="vt-foot"><span class="bars"></span><span>EZ${p.n}</span></span>
+    </span>
+  </button>`;
+$("passes").innerHTML = P.map(p => { const o = p.pos;
+  return `<div class="vt-pos" style="--x:${o.x}px;--y:${o.y}px;--r:${o.r}deg;--z:${o.z};--hx:${o.hx}px;--hy:${o.hy}px;--hr:${o.hr}deg">${passHTML(p)}</div>`; }).join("");
+$("m-list").innerHTML = P.map(p => `<div class="vt-pos" style="--hx:0px;--hy:-4px;--hr:0deg">${passHTML(p)}</div>`).join("");
+
+function fly(p) {
+  const s = SKY[p ? p.scene : "sky"];
+  win.style.setProperty("--s1", s[0]); win.style.setProperty("--s2", s[1]);
+  document.querySelectorAll(".scene").forEach(el => el.classList.toggle("on", !!p && el.dataset.scene === p.scene));
+  $("clouds").style.opacity = !p ? 1 : p.scene === "city" ? 0 : 0.75;
+  flap(statusEl, p ? `NOW BOARDING · EZ${p.n} → ${p.code} · ${p.place.toUpperCase()}` : "CRUISING ALTITUDE");
+}
+let cur = "";
+document.addEventListener("pointerover", e => { const t = e.target.closest("[data-sky]"); const id = t ? t.dataset.sky : ""; if (id !== cur) { cur = id; fly(P.find(x => x.id === id)); } });
+document.addEventListener("focusin", e => { const t = e.target.closest("[data-sky]"); if (t) { cur = t.dataset.sky; fly(P.find(x => x.id === cur)); } });
+win.addEventListener("click", () => win.classList.toggle("shut"));
+
+// scale the object to the space between the header and the info strip
+function fit() {
+  const st = $("stage"); if (!st || home.hidden) return;
+  if (innerWidth <= 720) {
+    // phones: tickets move to a list below, so crop the object to the window and the two signs
+    const k = Math.min(st.clientWidth / 560, 1);
+    st.style.height = Math.round(560 * k) + "px";
+    cluster.style.setProperty("--k", k.toFixed(3));
+    cluster.style.setProperty("--ox", Math.round(53 * k) + "px");
+    return;
+  }
+  st.style.height = "";
+  cluster.style.setProperty("--ox", "0px");
+  const k = Math.min(st.clientWidth / 820, st.clientHeight / 640, 1.3);
+  cluster.style.setProperty("--k", Math.max(0.3, k).toFixed(3));
+}
+addEventListener("resize", fit); fit();
+
+// intro (GSAP): a short line of text resolves, a cut runs across it, the screen splits open and the object assembles
+function intro() {
+  const el = $("intro");
+  if (reduce || !window.gsap) return;
+  el.hidden = false;
+  document.documentElement.style.overflow = "hidden";
+  const msgs = el.querySelectorAll(".msg");
+  const parts = [".win", ".sign-y", ".sign-b", "#passes .vt-pos", "#hd", ".ft"];
+  const finish = () => { el.remove(); document.documentElement.style.overflow = ""; gsap.set(parts, { clearProps: "transform,opacity" }); };
+  msgs.forEach(m => flap(m, m.textContent, 150, null, 34));
+  const tl = gsap.timeline({ onComplete: finish });
+  tl.set(parts, { opacity: 0 })
+    .to(".intro .cut", { scaleX: 1, duration: .7, ease: "power3.inOut" }, 1.35)
+    .to(".intro .cut", { opacity: 0, duration: .2 }, "+=.1")
+    .to(".intro .half.top", { yPercent: -101, duration: 1.1, ease: "expo.inOut" }, "<")
+    .to(".intro .half.bot", { yPercent: 101, duration: 1.1, ease: "expo.inOut" }, "<")
+    .fromTo(".win", { opacity: 0, scale: .9, y: 24 }, { opacity: 1, scale: 1, y: 0, duration: 1.2, ease: "expo.out" }, "<.55")
+    .fromTo("#shade", { height: "100%" }, { height: "12%", duration: 1.1, ease: "power3.inOut" }, "<.25")
+    .fromTo(".sign-y", { opacity: 0, y: -40, rotation: -18 }, { opacity: 1, y: 0, rotation: 0, duration: 1.1, ease: "back.out(1.7)" }, "<.05")
+    .fromTo("#passes .vt-pos", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 1, stagger: .07, ease: "expo.out" }, "<.08")
+    .fromTo(".sign-b", { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: .9, ease: "expo.out" }, "<.2")
+    .fromTo(["#hd", ".ft"], { opacity: 0 }, { opacity: 1, duration: .6, stagger: .08 }, "<.1")
+    .set("#shade", { clearProps: "height" });
+  el.addEventListener("click", () => tl.progress(1));
+}
+
+/* ---------------- project pop-up ---------------- */
+let lastFocus = null;
+const mdl = $("mdl");
+function modalHTML(p) {
+  return `<div class="mdl-back" data-mclose></div>
+  <article class="mdl-card" role="dialog" aria-modal="true" aria-label="${p.title}">
+    <div class="mdl-img art art-${p.art}" style="${artVars(p)}"><span class="tag mono">EZ${p.n} → ${p.code}</span></div>
+    <div class="mdl-body">
+      <div class="mdl-top lbl"><span>Flight EZ${p.n} · ${p.year}</span><button class="mdl-x" data-mclose aria-label="Close">×</button></div>
+      <h3 data-flap="${p.title.toUpperCase()}">${p.title}</h3>
+      <p class="mdl-lead">${p.desc} Placeholder: two sentences on the problem, who it was for, and what you did.</p>
+      <dl class="mdl-dl"><div><dt>Role</dt><dd>${p.role}</dd></div><div><dt>Type</dt><dd>${p.kind}</dd></div><div><dt>Timeline</dt><dd>Placeholder · 3 months</dd></div><div><dt>Team</dt><dd>Placeholder, 4 people</dd></div></dl>
+      <h4 class="lbl">Highlights</h4>
+      <ul class="mdl-ul"><li>Placeholder result with a number, e.g. +24% activation</li><li>Placeholder: the key design decision</li><li>Placeholder: what shipped and where</li></ul>
+      <div class="mdl-act"><button class="mdl-cta" data-noop>Read the full case study ↗</button>
+        <span class="mdl-nav"><button data-mnav="-1" aria-label="Previous project">←</button><button data-mnav="1" aria-label="Next project">→</button></span></div>
+    </div>
+  </article>`;
+}
+function openModal(id) {
+  if (mdl.hidden) lastFocus = document.activeElement;
+  mdl.innerHTML = modalHTML(P.find(x => x.id === id)); mdl.dataset.cur = id; mdl.hidden = false;
+  flapAll(mdl); mdl.querySelector(".mdl-x").focus({ preventScroll: true });
+}
+function closeModal() { if (mdl.hidden) return false; mdl.hidden = true; mdl.innerHTML = ""; lastFocus?.focus?.({ preventScroll: true }); return true; }
+function navModal(d) { const i = P.findIndex(x => x.id === mdl.dataset.cur); openModal(P[(i + d + P.length) % P.length].id); }
+
+/* ---------------- wallet ---------------- */
+const WAVE = `<svg class="bk-wave" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M5 4.5a5 5 0 0 1 0 7"/><path d="M8 3a7.5 7.5 0 0 1 0 10"/><path d="M11 1.5a10 10 0 0 1 0 13"/></svg>`;
+const cardHTML = (e, i) => `<button class="bk" data-wcard="${e.id}" style="--cc:${e.cc};--ct:${e.ct};--i:${i}" aria-label="Show ${e.title}">
+    <span class="bk-top"><b>${e.title}</b><span>${e.imgs} pcs</span></span>
+    <span class="bk-mid"><span class="bk-chip"></span>${WAVE}</span>
+    <span><span class="bk-num">•••• •••• •••• 00${e.n}</span><span class="bk-name"><span>${e.kind}</span><span>${e.made}</span></span></span>
+  </button>`;
+function receiptHTML(e) {
+  const now = new Date();
+  const date = now.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric" }).toUpperCase();
+  const time = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toUpperCase();
+  const stars = "* ".repeat(40);
+  return `<div class="receipt" role="group" aria-label="Receipt for ${e.title}">
+    <button class="r-x" data-tear aria-label="Tear off receipt">×</button>
+    <div class="logo"></div><h3>${e.title}</h3>
+    <div class="tag">Receipt · Experiment ${e.n}</div>
+    <div class="small">Date: ${date}<br>Time: ${time} · Made: ${e.made}</div>
+    <div class="row small" style="margin-top:14px"><span>Description</span><span>Amount</span></div>
+    <div class="stars">${stars}</div>
+    <div class="row"><span>Pieces</span><span>${e.imgs}</span></div>
+    <div class="row"><span>Hours spent</span><span>${e.hours}</span></div>
+    <div class="row"><span>Iterations</span><span>${e.iters}</span></div>
+    <div class="row"><span>Cups of coffee</span><span>${e.coffee}</span></div>
+    <div class="stars">${stars}</div>
+    <div class="row small"><span>Client</span><span>${e.client}</span></div>
+    <div class="row small"><span>Made with</span><span>${e.tools}</span></div>
+    <div class="row small"><span>Total</span><span>$ 0.00</span></div>
+    <div class="row small"><span>Paid with</span><span>EZ card •••• 00${e.n}</span></div>
+    <div class="stars">${stars}</div>
+    <div class="thanks">Thank you for visiting</div>
+    <span class="r-note">${e.note}</span>
+  </div>`;
+}
+function printInto(paper, e) {
+  paper.innerHTML = receiptHTML(e);
+  const H = paper.firstElementChild.offsetHeight;
+  const a = paper.animate([{ height: "0px" }, { height: H + "px" }], { duration: reduce ? 1 : 1400, easing: "steps(28, end)", fill: "forwards" });
+  a.onfinish = () => { paper.style.height = H + "px"; a.cancel(); };
+  paper.onclick = ev => { if (ev.target.closest("[data-tear]")) { const r = paper.firstElementChild; r.animate([{ transform: "none", opacity: 1 }, { transform: "translate(-10px, 40px) rotate(-5deg)", opacity: 0 }], { duration: 300, easing: "ease-in" }).onfinish = () => { paper.innerHTML = ""; paper.style.height = "0px"; }; } };
+}
+const ASPECTS = [1, 0.78, 1.3, 0.72, 1.12, 1.5, 0.86];
+function thumbStyle(e, i) {
+  const ar = ASPECTS[(i * 3 + parseInt(e.n, 10)) % ASPECTS.length], swap = i % 2;
+  return { ar, cls: "abcd"[i % 4], style: `--c1:${swap ? e.ct : e.cc};--c2:${swap ? e.cc : e.ct}` };
+}
+let wSel = "e1";
+function walletDetail(e) {
+  const thumbs = Array.from({ length: e.imgs }, (_, i) => { const t = thumbStyle(e, i);
+    return `<button class="wl-th art art-${t.cls}" style="${t.style};aspect-ratio:${t.ar}" data-th="${e.id}:${i}" aria-label="View piece ${i + 1} of ${e.imgs}"><span class="n mono">${String(i + 1).padStart(2, "0")}</span></button>`; }).join("");
+  return `<div class="wl-detail">
+    <header class="wl-h"><span class="mono" style="color:var(--mute)">Experiment ${e.n} · ${e.kind} · ${e.imgs} pieces</span>
+      <h3 data-flap="${e.title}">${e.title}</h3><p>${e.desc}</p>${e.link ? `<div class="links mono"><span>${e.link}</span></div>` : ""}</header>
+    <div class="wl-body">
+      <div class="printer"><div class="printer-slot"></div><div class="paper-wrap" id="paper"></div></div>
+      <div><div class="wl-galhead mono"><span>Gallery</span><span>${e.imgs} pieces · click to enlarge</span></div><div class="wl-gal">${thumbs}</div></div>
+    </div></div>`;
+}
+function selectWallet(id, tap) {
+  wSel = id;
+  const e = E.find(x => x.id === id), stack = $("wl-stack");
+  stack.querySelectorAll(".bk").forEach(b => b.classList.toggle("on", b.dataset.wcard === id));
+  if (tap) { const b = stack.querySelector(`[data-wcard="${id}"]`); b.classList.remove("tap"); void b.offsetWidth; b.classList.add("tap"); }
+  $("wl-host").innerHTML = walletDetail(e);
+  flapAll($("wl-host"));
+  printInto($("paper"), e);
+}
+
+/* lightbox */
+let lbState = null;
+const lb = $("lb");
+function openLB(eid, i) {
+  const e = E.find(x => x.id === eid), t = thumbStyle(e, i);
+  lbState = { eid, i };
+  lb.innerHTML = `<div class="lb-top mono"><span>${e.title} · ${String(i + 1).padStart(2, "0")} / ${String(e.imgs).padStart(2, "0")}</span><button data-lbclose aria-label="Close viewer">×</button></div>
+    <div class="lb-stage"><button data-lbnav="-1" aria-label="Previous piece">←</button>
+      <div class="lb-img art art-${t.cls}" style="${t.style};aspect-ratio:${t.ar}" role="img" aria-label="${e.title}, piece ${i + 1}"></div>
+      <button data-lbnav="1" aria-label="Next piece">→</button></div>
+    <div class="lb-bot mono"><span>Placeholder caption: client, date, one line of context</span>
+      <div class="lb-strip">${Array.from({ length: e.imgs }, (_, j) => { const s = thumbStyle(e, j); return `<button class="art art-${s.cls}" style="${s.style}" data-lbgo="${j}" aria-label="Piece ${j + 1}" aria-current="${j === i}"></button>`; }).join("")}</div></div>`;
+  lb.hidden = false; lb.querySelector("[data-lbclose]").focus({ preventScroll: true });
+}
+function closeLB() { if (lb.hidden) return false; lb.hidden = true; lb.innerHTML = ""; lbState = null; return true; }
+function navLB(d) { const e = E.find(x => x.id === lbState.eid); openLB(e.id, (lbState.i + d + e.imgs) % e.imgs); }
+
+/* ---------------- pages ---------------- */
+const page = $("page");
+function go(view) {
+  document.querySelectorAll(".hd-nav [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === view));
+  try { history.replaceState(null, "", view === "home" ? location.pathname : "#" + view); } catch (_) {}
+  window.scrollTo(0, 0);
+  if (view === "home") { page.hidden = true; page.innerHTML = ""; home.hidden = false; fit(); return; }
+  home.hidden = true; page.hidden = false;
+  if (view === "wallet") {
+    page.innerHTML = `<div class="page">
+      <div class="page-h"><h2 data-flap="Wallet">Wallet</h2><p>Experiments, side projects and commissions. Pick a card: its receipt prints with the details, and the work appears beside it.</p></div>
+      <div class="wl"><div><div class="wl-stack" id="wl-stack">${E.map(cardHTML).join("")}</div><p class="wl-hint mono">05 cards · pick one</p></div><div id="wl-host"></div></div></div>`;
+    flapAll(page); selectWallet(wSel, false);
+  } else {
+    page.innerHTML = `<div class="page">
+      <div class="page-h"><h2 data-flap="ID">ID</h2><p>About me, for the paperwork.</p></div>
+      <div class="idp">
+        <div class="idcard" id="idcard">
+          <header><b>Eileen Zhang</b><span>Passenger ID · EZ-2026</span></header>
+          <div class="id-photo">PHOTO</div>
+          <div class="id-fields">
+            <div><small>Surname</small><span>Zhang</span></div><div><small>Given name</small><span>Eileen</span></div>
+            <div class="wide"><small>Occupation</small><span>Designer &amp; developer</span></div>
+            <div><small>Based in</small><span>Placeholder</span></div><div><small>Issued</small><span>Oct 2026</span></div>
+            <div><small>Flights</small><span>04</span></div><div><small>Seat</small><span>01A · Window</span></div>
+          </div>
+          <div class="id-mrz">P&lt;EZ&lt;ZHANG&lt;&lt;EILEEN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div>
+        </div>
+        <div class="bio">
+          <p>Placeholder bio. I design and build interfaces, and I care about the small moments that make software feel considered.</p>
+          <p style="color:var(--mute)">Two more sentences about how you work, what you are looking for, and something personal.</p>
+          <dl><dt>Now</dt><dd>Placeholder role, placeholder studio</dd><dt>Before</dt><dd>Placeholder · Placeholder</dd><dt>Tools</dt><dd>Figma, three.js, Svelte</dd><dt>Contact</dt><dd>Email ↗ · Read.cv ↗ · Instagram ↗</dd></dl>
+        </div>
+      </div></div>`;
+    flapAll(page);
+    const card = $("idcard");
+    card.addEventListener("pointermove", e => { const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      card.style.setProperty("--ry", (x * 14).toFixed(2) + "deg"); card.style.setProperty("--rx", (-y * 12).toFixed(2) + "deg"); card.style.setProperty("--sh", (x * 120).toFixed(0) + "%"); });
+    card.addEventListener("pointerleave", () => { card.style.setProperty("--ry", "0deg"); card.style.setProperty("--rx", "0deg"); card.style.setProperty("--sh", "-40%"); });
+  }
+}
+
+/* ---------------- wiring ---------------- */
+document.addEventListener("click", e => {
+  const t = e.target;
+  if (t.closest("[data-noop]")) return;
+  if (t.closest("[data-mclose]")) { closeModal(); return; }
+  const mn = t.closest("[data-mnav]"); if (mn) { navModal(+mn.dataset.mnav); return; }
+  if (t.closest("[data-lbclose]") || t === lb) { closeLB(); return; }
+  const ln = t.closest("[data-lbnav]"); if (ln) { navLB(+ln.dataset.lbnav); return; }
+  const lg = t.closest("[data-lbgo]"); if (lg) { openLB(lbState.eid, +lg.dataset.lbgo); return; }
+  const g = t.closest("[data-go]"); if (g) { go(g.dataset.go); return; }
+  const o = t.closest("[data-open]"); if (o) { openModal(o.dataset.open); return; }
+  const wc = t.closest("[data-wcard]"); if (wc) { if (wc.dataset.wcard !== wSel || !$("paper")?.firstElementChild) selectWallet(wc.dataset.wcard, true); return; }
+  const th = t.closest("[data-th]"); if (th) { const [eid, i] = th.dataset.th.split(":"); openLB(eid, +i); }
+});
+document.addEventListener("keydown", e => {
+  if (lbState) { if (e.key === "Escape") closeLB(); else if (e.key === "ArrowRight") navLB(1); else if (e.key === "ArrowLeft") navLB(-1); return; }
+  if (!mdl.hidden) { if (e.key === "Escape") closeModal(); else if (e.key === "ArrowRight") navModal(1); else if (e.key === "ArrowLeft") navModal(-1); }
+});
+
+const start = location.hash.slice(1);
+if (start === "wallet" || start === "id") go(start); else intro();
+</script>

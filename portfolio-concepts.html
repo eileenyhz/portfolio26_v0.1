@@ -1,0 +1,471 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Boarding Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: comparison shell (three tabs + notes) around a fake browser frame. Every concept shares version A's
+   minimal header and A's vertical boarding passes, tucked until hovered; only the scene changes. */
+:root {
+  --sh-bg: #ecebe8; --sh-fg: #1b1b1a; --sh-muted: #6d6c68; --sh-line: #d2d0ca; --sh-card: #f6f5f2; --sh-accent: #3b4fd8;
+  --cabin: #e6e7e3; --ink: #1d2027; --mute: #6b7079; --paper: #fbfaf7;
+  --f-sans: "Geist", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.7, 0, .2, 1); --out: cubic-bezier(.16, 1, .3, 1); --spring: cubic-bezier(.2, .9, .3, 1.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --sh-bg: #151514; --sh-fg: #ecebe8; --sh-muted: #9b9a95; --sh-line: #33322f; --sh-card: #1e1e1c; --sh-accent: #9aa8ff; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --sh-bg: #151514; --sh-fg: #ecebe8; --sh-muted: #9b9a95; --sh-line: #33322f; --sh-card: #1e1e1c; --sh-accent: #9aa8ff; color-scheme: dark; }
+@property --s1 { syntax: "<color>"; inherits: true; initial-value: #c2d3ec; }
+@property --s2 { syntax: "<color>"; inherits: true; initial-value: #7d99cf; }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--sh-bg); color: var(--sh-fg); font-family: var(--f-sans); font-size: 15px; line-height: 1.5; margin: 0; padding: 0 16px; padding-block: 16px 48px; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 3px; }
+.mono { font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; line-height: 1.35; }
+.bars { background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 8px, currentColor 8px 11px, transparent 11px 13px); background-size: 26px 100%; }
+.gfx svg { width: 100%; height: 100%; display: block; }
+.art { background-color: var(--c1); color: var(--c2); position: relative; overflow: hidden; }
+.art::before { content: ""; position: absolute; inset: 0; }
+.art-a::before { background: repeating-radial-gradient(circle at 72% 72%, var(--c2) 0 5px, transparent 5px 15px); }
+.art-b::before { background: repeating-linear-gradient(-32deg, var(--c2) 0 9px, transparent 9px 24px); }
+.art-c::before { background: radial-gradient(circle at 30% 38%, var(--c2) 0 28%, transparent 28.5%), linear-gradient(transparent 62%, var(--c2) 62% 66%, transparent 66%); }
+.art-d::before { background: radial-gradient(var(--c2) 2.2px, transparent 2.6px) 0 0 / 13px 13px; }
+
+/* ---------- shell ---------- */
+.sh { max-width: 1280px; margin: 0 auto; display: grid; gap: 14px; }
+.sh-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+.sh-head h1 { font-size: 21px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+.sh-head p { margin: 2px 0 0; color: var(--sh-muted); font-size: 13.5px; }
+.sh-tabs { display: flex; gap: 4px; background: var(--sh-card); border: 1px solid var(--sh-line); border-radius: 999px; padding: 4px; flex-wrap: wrap; }
+.sh-tab { padding: 7px 14px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--sh-muted); display: flex; gap: 8px; align-items: center; }
+.sh-tab kbd { font-family: var(--f-mono); font-size: 11px; border: 1px solid var(--sh-line); border-radius: 4px; padding: 0 5px; }
+.sh-tab[aria-selected="true"] { background: var(--sh-fg); color: var(--sh-bg); }
+.sh-tab[aria-selected="true"] kbd { border-color: currentColor; }
+.sh-frame { border: 1px solid var(--sh-line); border-radius: 12px; overflow: hidden; background: var(--sh-card); }
+.sh-bar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--sh-line); font-size: 12px; color: var(--sh-muted); }
+.sh-dots { display: flex; gap: 6px; } .sh-dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--sh-line); display: block; }
+.sh-url { flex: 1; text-align: center; font-family: var(--f-mono); }
+.stage { position: relative; height: clamp(640px, calc(100vh - 200px), 800px); overflow: hidden; color: var(--ink); }
+.sh-notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.sh-note { background: var(--sh-card); border: 1px solid var(--sh-line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.sh-note h3 { margin: 0 0 4px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--sh-muted); font-weight: 600; }
+.sh-note p { margin: 0; font-size: 14px; }
+.sh-disc { font-size: 12.5px; color: var(--sh-muted); margin: 0; }
+
+/* ---------- version A header (shared) ---------- */
+.hd { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; font-family: var(--f-mono); font-size: 12px; z-index: 20; color: var(--ink); }
+.hd b { font-weight: 600; letter-spacing: .18em; }
+.hd nav { display: flex; gap: 18px; }
+.hd nav button:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- version A boarding pass (shared) ---------- */
+.vt { --tw: 204px; --th: 336px; --stub: 96px; position: relative; display: block; width: var(--tw); height: var(--th); text-align: left; filter: drop-shadow(0 1px 1px rgb(0 0 0 / .08)) drop-shadow(0 -2px 14px rgb(0 0 0 / .13)); }
+.vt-in { height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) var(--stub);
+  -webkit-mask: radial-gradient(circle 10px at 0 calc(100% - var(--stub)), #0000 97%, #000), radial-gradient(circle 10px at 100% calc(100% - var(--stub)), #0000 97%, #000); -webkit-mask-composite: source-in;
+  mask: radial-gradient(circle 10px at 0 calc(100% - var(--stub)), #0000 97%, #000), radial-gradient(circle 10px at 100% calc(100% - var(--stub)), #0000 97%, #000); mask-composite: intersect; }
+.vt-body, .vt-stub { position: relative; overflow: hidden; background: var(--paper); color: #161616; isolation: isolate; transition: color .4s, border-color .4s; }
+.vt-body { border-radius: 14px 14px 0 0; padding: 14px 16px 12px; display: grid; grid-template-rows: auto auto auto minmax(0, 1fr) auto; gap: 6px; }
+.vt-stub { border-radius: 0 0 14px 14px; border-top: 2px dashed rgb(0 0 0 / .18); }
+.vt-body::before, .vt-stub::before { content: ""; position: absolute; inset: 0; z-index: -1; transform: scaleY(0); transform-origin: 50% 0; transition: transform .55s var(--ease); }
+.vt-body::before { background: var(--t1); }
+.vt-stub::before { background: var(--t2); transition-delay: .08s; }
+.vt.on .vt-body::before, .vt.on .vt-stub::before { transform: scaleY(1); }
+.vt.on .vt-body { color: var(--ton); }
+.vt.on .vt-stub { color: var(--son); border-color: transparent; }
+.vt-row { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+.vt-title { font-weight: 750; font-size: 30px; line-height: .9; letter-spacing: -0.045em; text-transform: uppercase; }
+.vt-sub { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; }
+.vt-gfx { border-radius: 8px; overflow: hidden; opacity: .1; filter: grayscale(1); transition: opacity .5s .1s, filter .5s; min-height: 0; }
+.vt.on .vt-gfx { opacity: 1; filter: none; }
+.vt-info { display: flex; justify-content: space-between; gap: 8px; font-family: var(--f-mono); font-size: 10px; text-transform: uppercase; border-top: 1px solid currentColor; padding-top: 6px; opacity: .85; white-space: nowrap; }
+.vt-cta { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; transition: opacity .3s, transform .4s var(--ease); }
+.vt-prev { position: absolute; inset: 10px 10px 32px; border-radius: 8px; transform: translateY(-160%); opacity: 0; transition: transform .55s var(--spring) .1s, opacity .2s .1s; }
+.vt-foot { position: absolute; left: 12px; right: 12px; bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-family: var(--f-mono); font-size: 10px; opacity: 0; transition: opacity .3s .2s; }
+.vt-foot .bars { width: 90px; height: 14px; }
+.vt.on .vt-cta { opacity: 0; transform: translateY(16px); }
+.vt.on .vt-prev { transform: none; opacity: 1; }
+.vt.on .vt-foot { opacity: 1; }
+
+/* the A-style window (shared by concept 1) */
+.pw { position: relative; width: 236px; aspect-ratio: .68; border-radius: 48% / 34%; background: linear-gradient(145deg, #f8f8f5, #d9dad5); box-shadow: 0 0 0 11px #eeeeea, 0 0 0 12px #c9cac4, inset 0 2px 6px rgb(0 0 0 / .15); }
+.pane { position: absolute; inset: 9%; border-radius: 46% / 34%; overflow: hidden; background: linear-gradient(var(--s1), var(--s2)); transition: --s1 1s, --s2 1s; box-shadow: inset 0 0 0 3px rgb(0 0 0 / .08), inset 0 8px 18px rgb(0 0 0 / .28); }
+.scene { position: absolute; inset: 0; opacity: 0; transition: opacity .8s; }
+.scene.on { opacity: 1; }
+.scene svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.clouds { position: absolute; inset: 0; transition: opacity .8s; }
+.cloud { position: absolute; width: 90px; height: 30px; border-radius: 50%; background: radial-gradient(closest-side, rgb(255 255 255 / .95), rgb(255 255 255 / 0)); animation: drift linear infinite; }
+.cloud:nth-child(1) { top: 40%; animation-duration: 14s; }
+.cloud:nth-child(2) { top: 56%; width: 140px; height: 40px; animation-duration: 22s; animation-delay: -8s; }
+.cloud:nth-child(3) { top: 70%; width: 110px; animation-duration: 17s; animation-delay: -4s; }
+.cloud:nth-child(4) { top: 28%; width: 60px; height: 18px; animation-duration: 26s; animation-delay: -15s; opacity: .7; }
+@keyframes drift { from { left: 110%; } to { left: -80%; } }
+.shade { position: absolute; left: 0; right: 0; top: 0; height: 16%; background: repeating-linear-gradient(#ecebe7 0 6px, #dcdbd5 6px 7px); border-bottom: 3px solid #cfcfc8; transition: height .8s var(--ease); z-index: 3; }
+
+/* ========== 1. side window at one third ========== */
+.c1 { position: relative; height: 100%; background: var(--cabin); perspective: 1500px; }
+.c1-wall { position: absolute; left: calc(31% - 190px); top: 52%; width: 380px; height: 600px; translate: 0 -50%; transform: rotateY(34deg); transform-origin: 30% 50%; border-radius: 190px / 170px; background: linear-gradient(90deg, #f7f7f4 0%, #efefeb 55%, #dedfda 100%); box-shadow: inset -18px 0 40px rgb(0 0 0 / .05), inset 10px 0 20px rgb(255 255 255 / .7), 30px 40px 70px -40px rgb(0 0 0 / .35); display: grid; place-items: center; }
+.c1-wall::after { content: ""; position: absolute; left: 50%; bottom: 46px; width: 110px; height: 10px; translate: -50% 0; border-radius: 6px; background: linear-gradient(#d4d4ce, #e9e9e5); box-shadow: inset 0 1px 2px rgb(0 0 0 / .15); }
+.c1-copy { position: absolute; left: 50%; top: 50%; translate: 0 -50%; width: min(28%, 360px); display: grid; gap: 14px; }
+.c1-copy h2 { margin: 0; font-weight: 600; font-size: clamp(44px, 5vw, 72px); line-height: .92; letter-spacing: -0.05em; min-height: 1.84em; }
+.c1-copy .mono { color: var(--mute); }
+.c1-copy .mono b { color: var(--ink); font-weight: 500; }
+.c1-stack { position: absolute; right: 5%; top: 62px; width: 204px; height: calc(100% - 70px); }
+.c1-slot { position: absolute; left: 0; top: calc(var(--i) * 102px); z-index: var(--i); transition: transform .55s var(--spring); }
+.c1-slot:hover, .c1-slot:focus-within { transform: translate(-84px, -10px) rotate(-3deg); z-index: 10; }
+.c1-slot .vt { rotate: calc((var(--i) - 1.5) * 1.6deg); }
+
+/* ========== 2. train carriage, several windows ========== */
+.c2 { position: relative; height: 100%; background: linear-gradient(#dfe0dc 0 15%, #c9cbc6 15% 15.6%, #eeeeea 15.6% 78%, #e1e2dd 78%); overflow: hidden; }
+.c2-led { position: absolute; left: 50%; top: 68px; translate: -50% 0; width: min(620px, 70%); height: 54px; border-radius: 8px; background: #111211; border: 3px solid #2b2c2a; box-shadow: inset 0 0 0 1px #000, 0 10px 20px -12px rgb(0 0 0 / .5); display: grid; place-items: center; overflow: hidden; }
+.c2-led span { font-family: var(--f-mono); font-weight: 600; font-size: 20px; letter-spacing: .16em; text-transform: uppercase; color: #ffb02e; text-shadow: 0 0 6px rgb(255 160 40 / .7); white-space: nowrap; }
+.c2-led::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle, transparent 0 1.1px, #111211 1.6px) 0 0 / 4px 4px; opacity: .55; pointer-events: none; }
+.c2-row { position: absolute; left: 5%; right: 5%; top: 158px; height: 280px; perspective: 1500px; }
+.c2-track { height: 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4%; transform: rotateY(17deg); transform-origin: 0 50%; }
+.tw { position: relative; display: grid; grid-template-rows: 1fr auto; gap: 10px; }
+.tw-frame { position: relative; border-radius: 26px; background: #f8f8f5; padding: 10px; box-shadow: inset 0 0 0 1px #d4d4ce, 0 18px 30px -20px rgb(0 0 0 / .4); }
+.tw-glass { position: relative; height: 100%; border-radius: 18px; overflow: hidden; background: linear-gradient(var(--s1), var(--s2)); transition: --s1 1s, --s2 1s; box-shadow: inset 0 6px 16px rgb(0 0 0 / .3); }
+.blind { position: absolute; left: 0; right: 0; top: 0; height: 100%; z-index: 3; background: repeating-linear-gradient(#e7dfcf 0 9px, #dacfba 9px 10px); box-shadow: 0 3px 6px rgb(0 0 0 / .2); transition: height 1s var(--ease); }
+.blind::after { content: ""; position: absolute; left: 50%; bottom: 8px; width: 34px; height: 6px; translate: -50% 0; border-radius: 3px; background: #9b8f78; }
+.tw.open .blind { height: 9%; }
+.pole { position: absolute; top: -10%; bottom: 0; width: 7px; left: 110%; background: #1f2124; z-index: 2; opacity: 0; }
+.tw.open .pole { opacity: 1; animation: pass 2.2s linear infinite; }
+.pole::before { content: ""; position: absolute; left: -200px; right: -200px; top: 18%; height: 2px; background: #1f2124; transform: rotate(-4deg); }
+@keyframes pass { from { left: 115%; } to { left: -20%; } }
+.tw-plate { justify-self: center; background: #d9dad4; border-radius: 4px; padding: 2px 8px; color: #555a60; }
+.c2-deck { --off: clamp(70px, 12vw, 176px); --peek: 82px; position: absolute; bottom: 0; left: 50%; translate: -50% 0; width: calc(3 * var(--off) + 204px); height: calc(var(--peek) + 26px); z-index: 6; }
+.deck-lbl { position: absolute; left: 0; right: 0; top: -4px; text-align: center; color: var(--mute); transition: opacity .3s; pointer-events: none; }
+.deck:hover .deck-lbl { opacity: 0; }
+.dslot { position: absolute; left: calc(var(--i) * var(--off)); bottom: calc(var(--peek) - 336px); rotate: calc((var(--i) - 1.5) * 2.2deg); transition: translate .55s var(--spring), rotate .45s; }
+.deck:hover .dslot, .deck:focus-within .dslot { translate: 0 -30px; }
+.deck .dslot:hover, .deck .dslot:focus-within { translate: 0 calc(var(--peek) - 336px - 8px); rotate: 0deg; z-index: 6; }
+
+/* ========== 3. gate reader ========== */
+.c3 { position: relative; height: 100%; background: #f6f4f0; }
+.rd { position: absolute; left: calc(32% - 170px); top: 47%; translate: 0 -50%; width: 340px; }
+.rd-top { position: relative; height: 54px; border-radius: 16px 16px 4px 4px; background: linear-gradient(#efe7d4, #e2d7bf); box-shadow: inset 0 1px 0 #fff8e8; z-index: 1; }
+.rd-top::before { content: ""; position: absolute; left: 22px; right: 22px; top: 12px; height: 8px; background: repeating-linear-gradient(90deg, #c8bc9f 0 3px, transparent 3px 7px); border-radius: 2px; opacity: .8; }
+.rd-slot { position: absolute; left: 50%; top: 30px; width: 236px; height: 9px; translate: -50% 0; border-radius: 5px; background: #2b2721; box-shadow: inset 0 2px 3px #000; }
+.rd-front { position: relative; z-index: 5; height: 138px; margin-top: -2px; border-radius: 4px 4px 18px 18px; background: linear-gradient(#e6dcc4, #d5c8ab); box-shadow: inset 0 -4px 0 rgb(0 0 0 / .06), 0 30px 40px -24px rgb(60 40 10 / .45); display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 18px; padding: 0 22px; }
+.rd-screen { height: 62px; border-radius: 8px; background: #0e1510; box-shadow: inset 0 0 0 2px #2c2a24, inset 0 4px 10px #000; display: grid; place-items: center; position: relative; overflow: hidden; }
+.rd-screen span { font-family: var(--f-mono); font-weight: 600; font-size: 17px; letter-spacing: .14em; color: #7dffa0; text-shadow: 0 0 8px rgb(110 255 150 / .6); text-transform: uppercase; white-space: nowrap; }
+.rd-screen.ok span { color: #b6ffcb; }
+.rd-screen::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 2px, rgb(0 0 0 / .25) 2px 3px); pointer-events: none; }
+.rd-led { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffb3a8, #d23a2a 60%, #7d1a10); box-shadow: 0 0 0 3px #cbbd9f; transition: background .3s, box-shadow .3s; }
+.rd-led.ok { background: radial-gradient(circle at 35% 35%, #d6ffe2, #2fc764 60%, #146b33); box-shadow: 0 0 0 3px #cbbd9f, 0 0 14px #2fc764; }
+.rd-brand { position: absolute; left: 22px; bottom: 12px; color: #a39576; }
+.rd-cap { margin-top: 26px; text-align: center; color: var(--mute); }
+.rd-cap b { color: var(--ink); font-weight: 500; }
+.c3-copy { position: absolute; left: 56%; top: 120px; display: grid; gap: 12px; max-width: 380px; }
+.c3-copy h2 { margin: 0; font-weight: 600; font-size: clamp(44px, 5vw, 72px); line-height: .92; letter-spacing: -0.05em; }
+.c3-copy .mono { color: var(--mute); }
+.c3-deck { left: 66%; }
+.c3-fly { position: absolute; left: 0; top: 0; overflow: hidden; z-index: 3; pointer-events: none; }
+.c3-fly .vt { position: absolute; }
+
+/* ---------- pop-up ---------- */
+.mdl { position: absolute; inset: 0; z-index: 70; display: grid; place-items: center; padding: 24px; }
+.mdl-back { position: absolute; inset: 0; background: rgb(240 240 236 / .7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); animation: fade .3s; }
+@keyframes fade { from { opacity: 0; } }
+.mdl-card { position: relative; width: min(860px, 100%); max-height: 100%; overflow: auto; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); background: var(--paper); border-radius: 14px; animation: pop .5s var(--out); box-shadow: 0 30px 60px -24px rgb(0 0 0 / .35); }
+@keyframes pop { from { opacity: 0; transform: translateY(24px) scale(.98); } }
+.mdl-img { min-height: 360px; border-radius: 14px 0 0 14px; }
+.mdl-body { padding: 24px 28px; display: grid; gap: 14px; align-content: start; border-left: 2px dashed rgb(0 0 0 / .16); }
+.mdl-top { display: flex; justify-content: space-between; align-items: center; color: var(--mute); }
+.mdl-x { font-size: 18px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgb(0 0 0 / .15); display: grid; place-items: center; }
+.mdl-body h3 { margin: 0; font-weight: 750; font-size: clamp(32px, 4vw, 46px); line-height: .92; letter-spacing: -0.045em; text-transform: uppercase; }
+.mdl-body p { margin: 0; color: #3c3b37; }
+.mdl-dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; padding: 12px 0; border-block: 1px solid rgb(0 0 0 / .1); }
+.mdl-dl dt { font-family: var(--f-mono); font-size: 10.5px; text-transform: uppercase; color: var(--mute); }
+.mdl-dl dd { margin: 0; font-size: 14px; }
+.mdl-cta { justify-self: start; background: var(--ink); color: #fff; padding: 9px 15px; border-radius: 999px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .sh-notes { grid-template-columns: 1fr; }
+  .c1-wall { left: 50%; translate: -50% -50%; transform: scale(.7) rotateY(20deg); top: 34%; }
+  .c1-copy { left: 24px; right: 24px; width: auto; top: auto; bottom: 24px; translate: none; }
+  .c1-stack { display: none; }
+  .c2-track { transform: none; grid-template-columns: repeat(2, 1fr); }
+  .c2-row { height: 330px; top: 140px; }
+  .rd { left: 50%; translate: -50% -50%; top: 36%; transform: scale(.85); }
+  .c3-copy { left: 24px; right: 24px; top: auto; bottom: 120px; }
+  .c3-deck { left: 50%; }
+  .mdl-card { grid-template-columns: 1fr; }
+  .mdl-img { min-height: 180px; border-radius: 14px 14px 0 0; }
+  .mdl-body { border-left: 0; border-top: 2px dashed rgb(0 0 0 / .16); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01s !important; transition-delay: 0s !important; }
+}
+</style>
+
+<div class="sh">
+  <header class="sh-head">
+    <div>
+      <h1>Boarding concepts</h1>
+      <p>Three directions. Each uses version A's header and its vertical boarding passes, tucked until hovered.</p>
+    </div>
+    <div class="sh-tabs" role="tablist" aria-label="Concepts">
+      <button class="sh-tab" role="tab" id="tab-1" data-k="1" aria-selected="true"><kbd>1</kbd>Side window</button>
+      <button class="sh-tab" role="tab" id="tab-2" data-k="2" aria-selected="false"><kbd>2</kbd>Train carriage</button>
+      <button class="sh-tab" role="tab" id="tab-3" data-k="3" aria-selected="false"><kbd>3</kbd>Gate reader</button>
+    </div>
+  </header>
+
+  <div class="sh-frame">
+    <div class="sh-bar"><span class="sh-dots"><i></i><i></i><i></i></span><span class="sh-url">eileenzhang.com</span><span style="width:42px"></span></div>
+
+    <!-- 1 -->
+    <section class="stage" id="s-1" role="tabpanel" aria-labelledby="tab-1">
+      <div class="c1">
+        <header class="hd"><b>EILEEN ZHANG</b><nav><button data-noop>Wallet</button><button data-noop>ID</button></nav></header>
+        <div class="c1-wall"><div class="pw"><div class="pane" id="c1-pane"><div class="clouds"><i class="cloud"></i><i class="cloud"></i><i class="cloud"></i><i class="cloud"></i></div><div class="scenes"></div><div class="shade"></div></div></div></div>
+        <div class="c1-copy">
+          <span class="mono" id="c1-k">Flight EZ 2026 · Window seat</span>
+          <h2 id="c1-t">Welcome<br>aboard.</h2>
+          <span class="mono" id="c1-s">Pick a boarding pass on the right</span>
+        </div>
+        <div class="c1-stack" id="c1-stack"></div>
+      </div>
+      <div class="mdl" hidden></div>
+    </section>
+
+    <!-- 2 -->
+    <section class="stage" id="s-2" role="tabpanel" aria-labelledby="tab-2" hidden>
+      <div class="c2">
+        <header class="hd"><b>EILEEN ZHANG</b><nav><button data-noop>Wallet</button><button data-noop>ID</button></nav></header>
+        <div class="c2-led"><span id="c2-led">Welcome aboard · EZ 2026</span></div>
+        <div class="c2-row"><div class="c2-track" id="c2-track"></div></div>
+        <div class="c2-deck deck" id="c2-deck"><div class="deck-lbl mono">Your tickets</div></div>
+      </div>
+      <div class="mdl" hidden></div>
+    </section>
+
+    <!-- 3 -->
+    <section class="stage" id="s-3" role="tabpanel" aria-labelledby="tab-3" hidden>
+      <div class="c3" id="c3">
+        <header class="hd"><b>EILEEN ZHANG</b><nav><button data-noop>Wallet</button><button data-noop>ID</button></nav></header>
+        <div class="rd" id="rd">
+          <div class="rd-top"><i class="rd-slot" id="rd-slot"></i></div>
+          <div class="rd-front"><div class="rd-screen" id="rd-screen"><span id="rd-text">Ready</span></div><i class="rd-led" id="rd-led"></i><span class="rd-brand mono">EZ Gate 01</span></div>
+          <p class="rd-cap mono" id="rd-cap">Click a boarding pass to scan it</p>
+        </div>
+        <div class="c3-copy">
+          <span class="mono">Flight EZ 2026 · Gate 01</span>
+          <h2>Welcome<br>aboard.</h2>
+          <span class="mono">Designer &amp; developer · placeholder city</span>
+        </div>
+        <div class="c2-deck deck c3-deck" id="c3-deck"><div class="deck-lbl mono">Your boarding passes</div></div>
+      </div>
+      <div class="mdl" hidden></div>
+    </section>
+  </div>
+
+  <div class="sh-notes" id="notes"></div>
+  <p class="sh-disc">Project names, summaries, destinations and images are placeholders. Wallet and ID are not wired up in these mock-ups.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script>
+const P = [
+  { id: "p1", n: "01", title: "Project One", kind: "Product design", year: "2026", role: "Lead designer", desc: "One-line summary of the project and its outcome.", art: "a", c1: "#2546d0", c2: "#f4c430", t1: "#2546d0", ton: "#ffffff", t2: "#f4c430", son: "#14205e", gfx: "waves", scene: "coast", place: "Coast at dusk", code: "SEA" },
+  { id: "p2", n: "02", title: "Project Two", kind: "Brand & web", year: "2025", role: "Designer + dev", desc: "One-line summary of the project and its outcome.", art: "b", c1: "#8fbf5a", c2: "#24331a", t1: "#9cc767", ton: "#141c0e", t2: "#24331a", son: "#d9f0bd", gfx: "bars", scene: "dunes", place: "Desert dunes", code: "DUN" },
+  { id: "p3", n: "03", title: "Project Three", kind: "Design system", year: "2025", role: "Systems design", desc: "One-line summary of the project and its outcome.", art: "c", c1: "#161616", c2: "#efe9dc", t1: "#161616", ton: "#efe9dc", t2: "#efe9dc", son: "#161616", gfx: "grid", scene: "peaks", place: "Snow peaks", code: "ALP" },
+  { id: "p4", n: "04", title: "Project Four", kind: "Interaction study", year: "2024", role: "Solo", desc: "One-line summary of the project and its outcome.", art: "d", c1: "#1f9a73", c2: "#ece9f6", t1: "#ece9f6", ton: "#161616", t2: "#1f9a73", son: "#ece9f6", gfx: "blobs", scene: "city", place: "City at night", code: "CTY" }
+];
+const SKY = { sky: ["#c2d3ec", "#7d99cf"], coast: ["#e88f97", "#ffd8a8"], dunes: ["#f4ad78", "#fde8c6"], peaks: ["#7aa3bd", "#e4eff1"], city: ["#0d0b24", "#2d2f66"] };
+const artVars = p => `--c1:${p.c1};--c2:${p.c2}`;
+const tkVars = p => `${artVars(p)};--t1:${p.t1};--ton:${p.ton};--t2:${p.t2};--son:${p.son}`;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+
+const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+function flap(el, text, html) {
+  if (reduce) { el[html ? "innerHTML" : "textContent"] = html || text; return; }
+  const start = performance.now(), per = 22, token = (el._f = (el._f || 0) + 1);
+  (function tick(now) {
+    if (el._f !== token) return;
+    const k = now - start; let out = "";
+    for (let i = 0; i < text.length; i++) out += (" ·→.".includes(text[i]) || k > i * per + 160) ? text[i] : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+    el.textContent = out;
+    if (k < text.length * per + 200) requestAnimationFrame(tick); else el[html ? "innerHTML" : "textContent"] = html || text;
+  })(performance.now());
+}
+
+function gfx(p) {
+  const W = 300, H = 120; let s = parseInt(p.n, 10) * 97; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647; let inner = "";
+  if (p.gfx === "waves") { for (let k = 0; k < 9; k++) { let d = ""; for (let x = 0; x <= W; x += 6) { const y = 8 + k * 13 + Math.sin(x / 32 + k * .45) * 7 * Math.sin(k * .3 + 1.1) + Math.sin(x / 12 + k) * 2; d += (x ? "L" : "M") + x + " " + y.toFixed(1); } inner += `<path d="${d}"/>`; }
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="${p.ton}" stroke-width="4.5" stroke-linecap="round">${inner}</g></svg>`; }
+  if (p.gfx === "bars") { for (let r = 0; r < 4; r++) for (let c = 0; c < 10; c++) { const x = c * 32 + (r % 2) * 16, y = r * 30 + 2; inner += `<rect x="${x}" y="${y}" width="10" height="32" rx="5" transform="rotate(-38 ${x + 5} ${y + 16})"/>`; }
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><g fill="${p.t2}">${inner}</g></svg>`; }
+  if (p.gfx === "grid") { for (let g = 0; g < 3; g++) for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) { const on = rnd() < .3; inner += `<rect x="${10 + g * 100 + c * 21}" y="${8 + r * 27}" width="14" height="14" fill="${on ? p.ton : "none"}" stroke="${p.ton}" stroke-width="2"/>`; }
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">${inner}</svg>`; }
+  const cols = ["#1f9a73", "#a993f0", "#e8db5a"]; const on = (x, y) => Math.sin(x * .75) + Math.cos(y * .95) + Math.sin((x + y) * .45) > .55;
+  for (let y = 0; y < 5; y++) for (let x = 0; x < 13; x++) { if (!on(x, y)) continue; const cx = 14 + x * 24, cy = 14 + y * 24, col = (x * 3 + y * 5) % 7 < 4 ? cols[0] : cols[1 + (x + y) % 2];
+    inner += `<circle cx="${cx}" cy="${cy}" r="11" fill="${col}"/>`; if (x < 12 && on(x + 1, y)) inner += `<rect x="${cx}" y="${cy - 7}" width="24" height="14" fill="${col}"/>`; if (y < 4 && on(x, y + 1)) inner += `<rect x="${cx - 7}" y="${cy}" width="14" height="24" fill="${col}"/>`; }
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">${inner}</svg>`;
+}
+function sceneSVG(id, wide) {
+  const v = wide ? `viewBox="0 40 200 290" preserveAspectRatio="xMidYMax slice"` : `viewBox="0 0 200 330" preserveAspectRatio="xMidYMax slice"`;
+  if (id === "coast") { let w = ""; for (let i = 0; i < 8; i++) { const y = 228 + i * 13; w += `<path d="M-10 ${y} q 15 -4 30 0 t 30 0 t 30 0 t 30 0 t 30 0 t 30 0 t 30 0 t 30 0" stroke="#a8b8f0" stroke-width="${1.2 + i * .25}" fill="none"/>`; }
+    return `<svg ${v}><circle cx="100" cy="206" r="40" fill="#fff2d8"/><rect x="0" y="220" width="200" height="110" fill="#3445a8"/>${w}<g fill="#ffe2b2"><rect x="86" y="232" width="28" height="3" rx="1.5"/><rect x="80" y="246" width="40" height="3" rx="1.5"/></g></svg>`; }
+  if (id === "dunes") return `<svg ${v}><circle cx="140" cy="140" r="22" fill="#fff4dc"/><path d="M0 235 Q50 202 100 226 T200 216 V330 H0Z" fill="#f2bd88"/><path d="M0 266 Q60 232 122 260 T200 250 V330 H0Z" fill="#df8e5a"/><path d="M0 298 Q70 270 140 292 T200 284 V330 H0Z" fill="#b65d3e"/></svg>`;
+  if (id === "peaks") return `<svg ${v}><path d="M-10 270 L40 185 L70 225 L112 150 L150 212 L172 188 L215 270 V330 H-10Z" fill="#7d9eae"/><path d="M40 185 L52 205 L44 202 L36 210 L30 202Z M112 150 L128 177 L118 172 L108 182 L98 173Z M172 188 L182 202 L174 200 L166 204Z" fill="#fff"/><path d="M-10 300 L50 242 L92 280 L150 228 L215 298 V330 H-10Z" fill="#33505b"/></svg>`;
+  if (id === "city") { let s = 9; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647; let st = "", b = "", w = "";
+    for (let i = 0; i < 36; i++) st += `<circle cx="${(rnd() * 200).toFixed(1)}" cy="${(rnd() * 170).toFixed(1)}" r="${(.5 + rnd()).toFixed(2)}" fill="#fff" opacity="${(.4 + rnd() * .6).toFixed(2)}"/>`;
+    let x = -4; while (x < 204) { const ww = 18 + rnd() * 22, h = 70 + rnd() * 110, y = 330 - h; b += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${ww.toFixed(1)}" height="${h.toFixed(1)}" fill="#20224a"/>`;
+      for (let gx = x + 4; gx < x + ww - 4; gx += 6) for (let gy = y + 6; gy < 322; gy += 8) if (rnd() < .42) w += `<rect x="${gx.toFixed(1)}" y="${gy.toFixed(1)}" width="2.6" height="3.4" fill="${rnd() < .75 ? "#ffd68e" : "#a8c6ff"}"/>`; x += ww + 2; }
+    return `<svg ${v}>${st}${b}${w}</svg>`; }
+  return "";
+}
+const scenesHTML = wide => P.map(p => `<span class="scene" data-scene="${p.scene}">${sceneSVG(p.scene, wide)}</span>`).join("");
+
+const passHTML = p => `
+  <button class="vt" data-open="${p.id}" data-p="${p.id}" style="${tkVars(p)}" aria-label="${p.title}. ${p.desc} Open details">
+    <span class="vt-in">
+      <span class="vt-body">
+        <span class="vt-row"><span>EZ Air</span><span>No. 00${p.n}</span></span>
+        <span class="vt-title">${p.title.replace(" ", "<br>")}</span>
+        <span class="vt-sub">${p.kind}</span>
+        <span class="vt-gfx gfx">${gfx(p)}</span>
+        <span class="vt-info"><span>${p.year}</span><span>${p.role}</span><span>→ ${p.code}</span></span>
+      </span>
+      <span class="vt-stub">
+        <span class="vt-cta">View case study ↗</span>
+        <span class="vt-prev art art-${p.art}"></span>
+        <span class="vt-foot"><span class="bars"></span><span>EZ${p.n}</span></span>
+      </span>
+    </span>
+  </button>`;
+
+/* hover → color the pass (".on"), and tell the scene which project */
+function bindHover(root, onFocus) {
+  let cur = "";
+  const set = id => { if (id === cur) return; cur = id; root.querySelectorAll(".vt").forEach(v => v.classList.toggle("on", v.dataset.p === id)); onFocus(P.find(x => x.id === id)); };
+  root.addEventListener("pointerover", e => { const s = e.target.closest("[data-slot]"); set(s ? s.dataset.slot : ""); });
+  root.addEventListener("pointerleave", () => set(""));
+  root.addEventListener("focusin", e => { const s = e.target.closest("[data-slot]"); if (s) set(s.dataset.slot); });
+  root.addEventListener("focusout", () => setTimeout(() => { if (!root.contains(document.activeElement)) set(""); }));
+}
+function paintSky(el, p) {
+  const s = SKY[p ? p.scene : "sky"];
+  el.style.setProperty("--s1", s[0]); el.style.setProperty("--s2", s[1]);
+  el.querySelectorAll(".scene").forEach(sc => sc.classList.toggle("on", !!p && sc.dataset.scene === p.scene));
+  const c = el.querySelector(".clouds"); if (c) c.style.opacity = !p ? 1 : p.scene === "city" ? 0 : .6;
+}
+
+/* ---------- 1. side window ---------- */
+const c1pane = $("c1-pane");
+c1pane.querySelector(".scenes").innerHTML = scenesHTML(false);
+$("c1-stack").innerHTML = P.map((p, i) => `<div class="c1-slot" data-slot="${p.id}" style="--i:${i}">${passHTML(p)}</div>`).join("");
+bindHover($("c1-stack"), p => {
+  paintSky(c1pane, p);
+  if (p) { flap($("c1-k"), `NOW BOARDING · EZ${p.n} → ${p.code}`); flap($("c1-t"), p.place.toUpperCase(), p.place.replace(" ", "<br>") + "."); flap($("c1-s"), `${p.title.toUpperCase()} · ${p.kind.toUpperCase()}`); }
+  else { flap($("c1-k"), "FLIGHT EZ 2026 · WINDOW SEAT"); flap($("c1-t"), "WELCOME ABOARD", "Welcome<br>aboard."); flap($("c1-s"), "PICK A BOARDING PASS ON THE RIGHT"); }
+});
+
+/* ---------- 2. train carriage ---------- */
+const track = $("c2-track");
+track.innerHTML = [1, 2, 3, 4].map(n => `<div class="tw" data-w="${n}"><div class="tw-frame"><div class="tw-glass">${scenesHTML(true)}<i class="pole"></i><div class="blind"></div></div></div><span class="tw-plate mono">Seat ${n}A</span></div>`).join("");
+$("c2-deck").insertAdjacentHTML("beforeend", P.map((p, i) => `<div class="dslot" data-slot="${p.id}" style="--i:${i}">${passHTML(p)}</div>`).join(""));
+let lastWin = 0;
+bindHover($("c2-deck"), p => {
+  const wins = [...track.querySelectorAll(".tw")];
+  wins.forEach(w => w.classList.remove("open"));
+  if (!p) { flap($("c2-led"), "WELCOME ABOARD · EZ 2026"); return; }
+  let n; do { n = 1 + Math.floor(Math.random() * 4); } while (n === lastWin);
+  lastWin = n;
+  const w = wins[n - 1];
+  paintSky(w.querySelector(".tw-glass"), p);
+  w.classList.add("open");
+  flap($("c2-led"), `NOW PASSING · ${p.place.toUpperCase()} · SEAT ${n}A`);
+});
+
+/* ---------- 3. gate reader ---------- */
+$("c3-deck").insertAdjacentHTML("beforeend", P.map((p, i) => `<div class="dslot" data-slot="${p.id}" style="--i:${i}">${passHTML(p)}</div>`).join(""));
+bindHover($("c3-deck"), p => { if (!busy) flap($("rd-text"), p ? `EZ${p.n} · READY TO SCAN` : "READY"); });
+let busy = false;
+const idleMsgs = ["READY", "WELCOME ABOARD", "EZ 2026 · GATE 01"];
+let idleI = 0;
+setInterval(() => { if (!busy && !$("s-3").hidden && !$("c3-deck").matches(":hover")) { idleI = (idleI + 1) % idleMsgs.length; flap($("rd-text"), idleMsgs[idleI]); } }, 3200);
+function scan(btn) {
+  if (busy) return;
+  busy = true;
+  const p = P.find(x => x.id === btn.dataset.p), c3 = $("c3");
+  const cr = c3.getBoundingClientRect(), br = btn.getBoundingClientRect(), sr = $("rd-slot").getBoundingClientRect();
+  const fly = document.createElement("div");
+  fly.className = "c3-fly";
+  Object.assign(fly.style, { width: cr.width + "px", height: (sr.top - cr.top + 4) + "px" });
+  fly.innerHTML = passHTML(p);
+  const clone = fly.firstElementChild; clone.classList.add("on");
+  Object.assign(clone.style, { left: (br.left - cr.left) + "px", top: (br.top - cr.top) + "px" });
+  c3.appendChild(fly);
+  btn.style.visibility = "hidden";
+  const tx = sr.left - cr.left + sr.width / 2 - 102, ty = sr.top - cr.top - 336 - 26;
+  flap($("rd-text"), "READING…");
+  const tl = gsap.timeline();
+  tl.to(clone, { left: tx, top: ty, rotation: 0, duration: reduce ? .01 : .8, ease: "expo.inOut" })
+    .to(clone, { top: ty + 336 + 40, duration: reduce ? .01 : .75, ease: "power2.in" })
+    .add(() => { $("rd-screen").classList.add("ok"); $("rd-led").classList.add("ok"); flap($("rd-text"), `EZ${p.n} ✓ BOARDING`); })
+    .add(() => openModal("3", p.id, () => { fly.remove(); btn.style.visibility = ""; $("rd-screen").classList.remove("ok"); $("rd-led").classList.remove("ok"); flap($("rd-text"), "READY"); busy = false; }), "+=.7");
+}
+
+/* ---------- pop-up ---------- */
+const onClose = {};
+function openModal(k, id, done) {
+  const box = document.querySelector(`#s-${k} .mdl`), p = P.find(x => x.id === id);
+  onClose[k] = done || null;
+  box.innerHTML = `<div class="mdl-back" data-mclose></div>
+    <article class="mdl-card" role="dialog" aria-modal="true" aria-label="${p.title}">
+      <div class="mdl-img art art-${p.art}" style="${artVars(p)}"></div>
+      <div class="mdl-body">
+        <div class="mdl-top mono"><span>Flight EZ${p.n} · ${p.year}</span><button class="mdl-x" data-mclose aria-label="Close">×</button></div>
+        <h3>${p.title}</h3>
+        <p>${p.desc} Placeholder: two sentences on the problem, who it was for, and what you did.</p>
+        <dl class="mdl-dl"><div><dt>Role</dt><dd>${p.role}</dd></div><div><dt>Type</dt><dd>${p.kind}</dd></div><div><dt>Timeline</dt><dd>Placeholder</dd></div><div><dt>Destination</dt><dd>${p.place}</dd></div></dl>
+        <button class="mdl-cta" data-noop>Read the full case study ↗</button>
+      </div>
+    </article>`;
+  box.hidden = false; box.querySelector(".mdl-x").focus({ preventScroll: true });
+}
+function closeModal(k) { const box = document.querySelector(`#s-${k} .mdl`); if (box.hidden) return; box.hidden = true; box.innerHTML = ""; const f = onClose[k]; onClose[k] = null; f && f(); }
+
+/* ---------- wiring ---------- */
+const NOTES = {
+  1: [["Idea", "One window, turned toward the page and set at one third. Its headline sits beside it, readable, and the boarding passes are stacked at the right edge."],
+      ["Try", "Hover a pass: it slides out of the stack and turns to color, the window shows that destination, and the headline flips to the place name. Click to open."],
+      ["Trade-off", "The calmest and most legible. The window is mood rather than information, which suits a quick visit."]],
+  2: [["Idea", "A train carriage: four windows recede along the wall under a dot-matrix sign. The blinds stay down until you pick a pass."],
+      ["Try", "Hover a pass and a random window's blind rolls up onto that project's destination, with poles flicking past as the train moves. The sign says which seat to look at."],
+      ["Trade-off", "The most atmospheric and the most to look at. The random window is playful, but it means your eye has to search."]],
+  3: [["Idea", "A gate reader, after mikes.cv's opening screen. The passes sit along the bottom and the reader is the one object on the page."],
+      ["Try", "Hover a pass and the reader says it is ready. Click it: the pass flies to the slot and slides in, the light turns green, and the project opens. Close the pop-up and the pass comes back."],
+      ["Trade-off", "The clearest cause and effect, and very little to explain. It drops the window, so the destination idea goes."]]
+};
+document.querySelectorAll(".stage").forEach(st => {
+  const k = st.id.slice(2);
+  st.addEventListener("click", e => {
+    if (e.target.closest("[data-noop]")) return;
+    if (e.target.closest("[data-mclose]")) { closeModal(k); return; }
+    const o = e.target.closest("[data-open]");
+    if (o && !o.closest(".c3-fly")) { if (k === "3") scan(o); else openModal(k, o.dataset.open); }
+  });
+});
+function show(k) {
+  ["1", "2", "3"].forEach(x => { $("s-" + x).hidden = x !== k; $("tab-" + x).setAttribute("aria-selected", x === k); });
+  $("notes").innerHTML = NOTES[k].map(([h, t]) => `<div class="sh-note"><h3>${h}</h3><p>${t}</p></div>`).join("");
+  try { history.replaceState(null, "", "#c" + k); } catch (_) {}
+}
+document.querySelectorAll(".sh-tab").forEach(t => t.addEventListener("click", () => show(t.dataset.k)));
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") ["1", "2", "3"].forEach(closeModal);
+  const i = ["1", "2", "3"].indexOf(e.key);
+  if (i > -1 && !e.metaKey && !e.ctrlKey) show(String(i + 1));
+});
+const h = location.hash.match(/^#c([123])$/);
+show(h ? h[1] : "1");
+</script>
