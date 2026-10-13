@@ -43,7 +43,7 @@ The **current direction** is her own three hand sketches (see §5), built in `po
 
 | File | What it is | Published artifact |
 |---|---|---|
-| `portfolio-sketches.html` | **Current work.** 4 tabs built from Eileen's 3 sketches (sketch 2 in two versions). | https://claude.ai/artifact/D1vJx5B9faGCjkQRhThFsi |
+| `portfolio-sketches.html` | **Current work.** 4 tabs built from Eileen's 3 sketches (sketch 2 in two versions), with Wallet, ID and case study pages. | https://claude.ai/artifact/D1vJx5B9faGCjkQRhThFsi |
 | `portfolio-concepts.html` | Earlier 3-concept mock-up (side window / train carriage / gate reader). | https://claude.ai/artifact/67KonwdfUSAbEmBsr7NdZH |
 | `portfolio.html` | Single-page site, last state = white Hiroto-style "object cluster" (rejected as ugly). Contains the full **Wallet page** (card stack + receipt printer + gallery + lightbox) and **ID page** (tilting ID card) to reuse. | https://claude.ai/artifact/JHbJkSKqaPCnVbudx2jaia |
 | `portfolio-grid-draft.html` | Previous single-page version (grid hero, GSAP split intro, bottom ticket dock). Kept as draft. | (was v2 of the link above) |
@@ -78,12 +78,12 @@ Tabs:
 3. **Sketch 2 · tickets** — same left side; menu bottom-left (Selected work / Wallet / ID); three projects as new tickets at the sketch's three spots (`.s-grey`, `.s-blue`, `.s-tick`).
 4. **Sketch 3** — name centered top, no nav; window centered; wallet in bottom-left corner, ticket book (passes) bottom center, passport bottom-right corner.
 
-Clicks: passes / tk2 tickets → project pop-up (`openModal`); wallet / passport / nav → placeholder sheet (`openSheet`). Esc closes.
+Clicks: passes / tk2 tickets → project pop-up (`openModal`); its "Read the full case study" button → **case study page**; wallet / passport / nav → **Wallet page** and **ID page**. Pages open in a `.pg` layer inside the active stage (`openPage(k, view, id)` / `closePage(k)`), with a sticky bar ("← Flights", name, Selected work / Wallet / ID). Wallet = card stack + receipt printer + gallery + full-size viewer (`#lb`, arrow keys); ID = tilting passenger card + bio. Esc closes viewer → pop-up → page.
 
 ## 6. Unfinished tasks and next steps
 
 - **Waiting on Eileen's choice** among the four sketch tabs (and any further visual feedback). Do not start the production build before she picks.
-- Then: build the chosen layout as the real site — reuse the Wallet page and ID page from `portfolio.html` (functions `go`, `walletDetail`, `selectWallet`, `printInto`, `openLB`, ID markup), wire nav/objects to them, keep the project pop-up.
+- Then: build the chosen layout as the real site. The Wallet, ID and case study pages are already wired into every tab of `portfolio-sketches.html` (code reused from `portfolio.html`).
 - Replace placeholder content (project names, summaries, colors, destinations, images, bio, links).
 - Possibly use a real sky/clouds photo for the window glass if Eileen supplies one (she has a photo-like reference; current clouds are painted in canvas).
 - Mobile layouts for the sketch tabs are only proportional scaling; the chosen direction needs a real phone layout.
@@ -95,7 +95,7 @@ Clicks: passes / tk2 tickets → project pop-up (`openModal`); wallet / passport
 - Painted clouds still look slightly "bubbly"; a photo texture would fix it.
 - GSAP animations look slow/stuck in the Claude desktop Browser pane when it is hidden (throttled timers); they run normally in a real browser. Verify timing in a real browser.
 - `portfolio-concepts.html` / `portfolio-directions.html` particle and older code is kept only as reference; B's particle window was disliked.
-- No git history existed before this handoff; no GitHub remote is configured, and `gh` CLI is not installed on this machine.
+- Repo: https://github.com/eileenyhz/portfolio26_v0.1 (public, branch `main`). GitHub CLI lives at `~/.local/gh/gh_2.102.0_macOS_arm64/bin/gh` (not on PATH); git uses it as credential helper.
 
 ## 8. Commands to build and test
 
@@ -113,7 +113,7 @@ Quick JS syntax check of the last inline script (what was used during developmen
 python3 -c "s=open('portfolio-sketches.html').read(); i=s.rfind('<script>'); open('/tmp/x.js','w').write(s[i+8:s.rfind('</script>')])" && node --check /tmp/x.js
 ```
 
-Test checklist: each tab at ~1280×900; hover each ticket (window scene, word roll, tag, tray color, overlap color); click a ticket (pop-up), wallet/passport (sheet); Esc; console has no errors.
+Test checklist: each tab at ~1280×900; hover each ticket (window scene, word roll, tag, tray color, overlap color); click a ticket (pop-up) → "Read the full case study" (case page); wallet / passport / nav (Wallet and ID pages); wallet card → receipt + gallery → image viewer; Esc; console has no errors.
 
 ## 9. Important context and constraints
 

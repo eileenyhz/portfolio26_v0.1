@@ -3,7 +3,7 @@
 <title>Boarding Sketches</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@200..500&family=Inter+Tight:ital,wght@0,300..800;1,400..600&family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@200..500&family=Inter+Tight:ital,wght@0,300..800;1,400..600&family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500;600&family=Gochi+Hand&display=swap">
 <style>
 /* Layout: comparison shell (four tabs + notes) around a fake browser frame. Each stage is a size container, and every
    position and size is a share of the stage, measured from Eileen's sketches. Type follows the In-Flight poster's logic
@@ -14,6 +14,9 @@
   --f-sans: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
   --f-disp: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
   --f-script: "Instrument Serif", "Times New Roman", serif;
+  --f-serif: "Instrument Serif", "Times New Roman", serif;
+  --f-hand: "Gochi Hand", "Comic Sans MS", cursive;
+  --line: rgb(17 18 20 / .12);
   --f-word: "Jost", "Futura", "Avenir Next", "Helvetica Neue", Arial, sans-serif;
   --f-mono: "Geist Mono", ui-monospace, Menlo, monospace;
   --ease: cubic-bezier(.7, 0, .2, 1); --out: cubic-bezier(.16, 1, .3, 1); --spring: cubic-bezier(.2, .9, .3, 1.15);
@@ -220,6 +223,122 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .mdl-dl dd { margin: 0; font-size: 14px; }
 .mdl-cta { justify-self: start; background: var(--ink); color: #fff; padding: 9px 15px; border-radius: 999px; font-size: 13px; }
 
+/* ---------- pages: Wallet, ID, case study (open over the landing view, inside the stage) ---------- */
+.pg { position: absolute; inset: 0; z-index: 60; overflow-y: auto; background: #fff; animation: pageIn .45s var(--out); }
+@keyframes pageIn { from { opacity: 0; translate: 0 12px; } }
+.pg-bar { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; padding: 18px 3.4cqw; background: rgb(255 255 255 / .92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.pg-bar b { font-weight: 600; font-size: 14px; letter-spacing: .14em; text-transform: uppercase; }
+.pg-back { justify-self: start; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; padding: 6px 13px; border: 1px solid rgb(0 0 0 / .14); border-radius: 999px; transition: background .2s, color .2s; }
+.pg-back:hover { background: var(--ink); color: #fff; }
+.pg-nav { justify-self: end; display: flex; gap: 2.4cqw; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
+.pg-nav button { color: #a3a6ad; display: flex; gap: .4em; align-items: baseline; }
+.pg-nav button::before { content: "●"; font-size: .6em; opacity: 0; }
+.pg-nav button:hover, .pg-nav button[aria-current="true"] { color: var(--ink); }
+.pg-nav button[aria-current="true"]::before { opacity: 1; }
+.page { padding: 22px 3.4cqw 80px; }
+.page-h { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 34px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.page-h h2 { margin: 0; font-family: var(--f-word); font-weight: 300; text-transform: uppercase; font-size: clamp(52px, 9cqw, 132px); letter-spacing: .01em; line-height: .84; }
+.page-h p { margin: 0; max-width: 40ch; color: var(--mute); }
+/* bank cards */
+.bk { --cw: 100%; width: var(--cw); aspect-ratio: 1.586; border-radius: 12px; background: var(--cc); color: var(--ct); padding: 12px 14px; display: grid; grid-template-rows: auto 1fr auto; font-family: var(--f-mono); font-size: 11px; position: relative; overflow: hidden; box-shadow: 0 1px 0 rgb(255 255 255 / .25) inset, 0 14px 24px -16px rgb(0 0 0 / .55); transition: transform .4s var(--out), box-shadow .4s, margin .45s var(--ease); text-align: left; }
+.bk::before { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgb(255 255 255 / .22), transparent 38%, transparent 62%, rgb(255 255 255 / .08)); pointer-events: none; }
+.bk-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.bk-top b { font-family: var(--f-sans); font-weight: 650; font-size: 15px; letter-spacing: -0.02em; }
+.bk-mid { display: flex; align-items: center; gap: 10px; }
+.bk-chip { width: 30px; height: 22px; border-radius: 4px; background: linear-gradient(135deg, #ecd796, #b69545); box-shadow: inset 0 0 0 1px rgb(0 0 0 / .15); }
+.bk-wave { width: 16px; height: 16px; opacity: .8; }
+.bk-num { font-size: 12.5px; letter-spacing: .12em; }
+.bk-name { font-family: var(--f-sans); font-size: 12.5px; font-weight: 500; display: flex; justify-content: space-between; margin-top: 2px; }
+.bk.tap { animation: tap .55s var(--out); }
+@keyframes tap { 40% { transform: translateY(-14px) rotate(-2deg) scale(1.03); } }
+
+/* receipt printer */
+.printer { display: grid; justify-items: center; width: 300px; }
+.printer-slot { width: 100%; height: 14px; border-radius: 7px; background: #1d1d1c; box-shadow: inset 0 -4px 0 #000, 0 6px 14px -6px rgb(0 0 0 / .4); }
+.paper-wrap { width: 272px; margin-top: -7px; overflow: hidden; height: 0; }
+.receipt { --rink: #222; width: 272px; background: #fafaf8; color: var(--rink); font-family: var(--f-serif); padding: 26px 22px 30px; text-align: center; position: relative; box-shadow: 0 16px 30px -18px rgb(0 0 0 / .35); -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 8px repeat-x; mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 8px repeat-x; }
+.receipt .logo { width: 30px; height: 26px; margin: 0 auto 6px; background: var(--rink); border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; clip-path: polygon(0 0, 100% 0, 100% 78%, 60% 70%, 40% 70%, 0 78%); }
+.receipt h3 { margin: 0; font-weight: 400; font-size: 38px; line-height: 1; }
+.receipt .tag { display: inline-block; margin: 12px 0 8px; background: #c7dbff; padding: 0 4px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+.receipt .small { font-size: 12px; letter-spacing: .05em; text-transform: uppercase; line-height: 1.35; }
+.receipt .row { display: flex; justify-content: space-between; gap: 10px; text-align: left; font-size: 17px; line-height: 1.6; }
+.receipt .row.small { font-size: 12px; line-height: 1.6; }
+.receipt .stars { overflow: hidden; white-space: nowrap; font-size: 11px; letter-spacing: .3em; margin: 6px 0; opacity: .85; }
+.receipt .thanks { margin: 18px 0 2px; font-size: 16px; }
+.receipt .r-note { font-family: var(--f-hand); color: #1f45e0; font-size: 22px; transform: rotate(-3deg); display: inline-block; }
+.receipt .r-x { position: absolute; right: 10px; top: 8px; font-family: var(--f-mono); font-size: 13px; color: #999; }
+
+/* wallet */
+.wl { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 40px; align-items: start; }
+.wl-stack { position: sticky; top: 90px; display: flex; flex-direction: column; }
+.wl-stack .bk + .bk { margin-top: -128px; }
+.wl-stack .bk.on + .bk { margin-top: 14px; }
+.wl-stack .bk:not(.on):hover { transform: translateY(-10px); }
+.wl-stack .bk.on { transform: translateX(10px); box-shadow: 0 0 0 2px var(--ink), 0 22px 30px -18px rgb(0 0 0 / .6); }
+.wl-hint { margin-top: 18px; color: var(--mute); }
+.wl-detail { min-width: 0; display: grid; gap: 22px; animation: pageIn .45s var(--out); }
+.wl-h { display: grid; gap: 6px; }
+.wl-h h3 { margin: 0; font-weight: 600; font-size: clamp(32px, 4vw, 48px); letter-spacing: -0.05em; line-height: 1; }
+.wl-h p { margin: 0; max-width: 60ch; color: #45443f; }
+.wl-h .links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.wl-h .links span { border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+.wl-body { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 28px; align-items: start; }
+.wl-gal { columns: 3 150px; column-gap: 12px; }
+.wl-th { display: block; width: 100%; margin: 0 0 12px; break-inside: avoid; border-radius: 8px; transition: transform .35s var(--spring), box-shadow .35s; }
+.wl-th:hover, .wl-th:focus-visible { transform: translateY(-3px); box-shadow: 0 14px 22px -14px rgb(0 0 0 / .5); }
+.wl-th .n { position: absolute; left: 8px; bottom: 6px; z-index: 1; background: var(--paper); color: var(--ink); padding: 0 5px; border-radius: 3px; }
+.wl-galhead { display: flex; justify-content: space-between; color: var(--mute); margin-bottom: 10px; }
+.lb { position: fixed; inset: 0; z-index: 80; background: rgb(14 14 13 / .97); color: #f2f1ec; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: 18px 24px; animation: fade .25s; }
+.lb-top, .lb-bot { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.lb-stage { display: grid; grid-template-columns: 48px minmax(0, 1fr) 48px; align-items: center; gap: 16px; min-height: 0; padding: 16px 0; }
+.lb-img { justify-self: center; max-height: 100%; max-width: 100%; height: 100%; border-radius: 6px; animation: pop .35s var(--spring); }
+.lb-stage > button, .lb-top button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgb(255 255 255 / .3); font-size: 18px; }
+.lb-strip { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.lb-strip button { flex: 0 0 auto; width: 44px; height: 32px; border-radius: 4px; opacity: .45; }
+.lb-strip button[aria-current="true"] { opacity: 1; outline: 2px solid #f2f1ec; outline-offset: 2px; }
+
+/* ID */
+.idp { display: grid; grid-template-columns: minmax(0, 560px) minmax(0, 1fr); gap: 48px; align-items: start; perspective: 1200px; }
+.idcard { aspect-ratio: 1.586; border-radius: 18px; background: linear-gradient(135deg, #f6f4ee, #dfe4ef 60%, #ead9d2); color: #1d2235; padding: 22px 24px; display: grid; grid-template-columns: 34% 1fr; grid-template-rows: auto 1fr auto; gap: 10px 22px; font-family: var(--f-mono); font-size: 11px; box-shadow: 0 30px 50px -30px rgb(30 30 60 / .55), inset 0 0 0 1px rgb(255 255 255 / .6); position: relative; overflow: hidden; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .2s; }
+.idcard::before { content: ""; position: absolute; inset: 0; background: repeating-radial-gradient(circle at 80% 20%, rgb(80 90 160 / .07) 0 1px, transparent 1px 7px); pointer-events: none; }
+.idcard::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / .55) 45%, transparent 60%); transform: translateX(var(--sh, -40%)); pointer-events: none; mix-blend-mode: soft-light; }
+.idcard header { grid-column: 1 / -1; display: flex; justify-content: space-between; letter-spacing: .12em; text-transform: uppercase; }
+.idcard header b { font-family: var(--f-sans); font-weight: 650; letter-spacing: -0.01em; font-size: 15px; text-transform: none; }
+.id-photo { border-radius: 10px; background: repeating-linear-gradient(-45deg, #c9cfdf 0 6px, #d6dbe8 6px 12px); display: grid; place-items: center; color: #6a7190; font-size: 10px; letter-spacing: .12em; }
+.id-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; align-content: start; }
+.id-fields div { display: grid; }
+.id-fields small { font-size: 9px; opacity: .6; letter-spacing: .1em; text-transform: uppercase; }
+.id-fields span { font-family: var(--f-sans); font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
+.id-fields .wide { grid-column: 1 / -1; }
+.id-mrz { grid-column: 1 / -1; font-size: 12.5px; letter-spacing: .14em; opacity: .75; white-space: nowrap; overflow: hidden; }
+.bio { display: grid; gap: 20px; }
+.bio p { margin: 0; font-size: clamp(19px, 2vw, 24px); line-height: 1.3; letter-spacing: -0.02em; }
+.bio dl { margin: 0; display: grid; grid-template-columns: 120px 1fr; gap: 8px 16px; font-family: var(--f-mono); font-size: 12px; border-top: 1px solid var(--line); padding-top: 16px; }
+.bio dt { color: var(--mute); text-transform: uppercase; }
+.bio dd { margin: 0; }
+.cs { max-width: 980px; margin: 0 auto; display: grid; gap: 28px; }
+.cs-hero { width: 100%; aspect-ratio: 16 / 7; border-radius: 10px; }
+.cs-meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; font-size: 14px; }
+.cs-meta b { display: block; font-family: var(--f-mono); font-weight: 400; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); margin-bottom: 2px; }
+.cs-sec { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.cs-sec h4 { margin: 0; font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
+.cs-sec p { margin: 0; max-width: 62ch; font-size: 17px; line-height: 1.5; }
+.cs-gal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.cs-gal .art { aspect-ratio: 4 / 3; border-radius: 8px; }
+.cs-next { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; text-transform: uppercase; letter-spacing: .05em; font-weight: 500; }
+.cs-next button:hover { text-decoration: underline; text-underline-offset: 4px; }
+@container (max-width: 1000px) {
+  .wl, .idp { grid-template-columns: 1fr; }
+  .wl-stack { position: static; flex-direction: row; overflow-x: auto; padding: 4px 4px 14px; gap: 12px; }
+  .wl-stack .bk { --cw: 220px; flex: 0 0 auto; }
+  .wl-stack .bk + .bk, .wl-stack .bk.on + .bk { margin-top: 0; }
+  .wl-stack .bk.on { transform: translateY(-6px); }
+  .wl-body { grid-template-columns: 1fr; justify-items: center; }
+  .wl-gal { width: 100%; }
+  .cs-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cs-sec { grid-template-columns: 1fr; gap: 6px; }
+}
+
 @media (max-width: 900px) {
   .sh-notes { grid-template-columns: 1fr; }
   .mdl-card { grid-template-columns: 1fr; }
@@ -277,6 +396,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
       <header class="hd"><b>Eileen Zhang<sup>©26</sup></b><nav><button aria-current="true">Selected work</button><button data-sheet="wallet">Wallet</button><button data-sheet="id">ID</button></nav></header>
       <div class="wb"></div>
       <div class="deck" data-deck data-pos="25,13,0|39.5,13,0|54,13.5,1.5|68,14,-2"></div>
+      <div class="pg" hidden></div>
       <div class="mdl" hidden></div>
     </section>
 
@@ -294,6 +414,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
         </span>
         <div class="fan"></div>
       </div>
+      <div class="pg" hidden></div>
       <div class="mdl" hidden></div>
     </section>
 
@@ -306,6 +427,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
       <div class="spot s-blue" data-t="p2"></div>
       <div class="spot s-tick" data-t="p3" data-h="1"></div>
       <span class="tray-cap mono">Selected work · 03 flights</span>
+      <div class="pg" hidden></div>
       <div class="mdl" hidden></div>
     </section>
 
@@ -317,13 +439,15 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
       <span class="o-lbl mono" style="left:26px">Wallet</span>
       <button class="o-ppt ppt lift" data-sheet="id" aria-label="Passport: about me"><span>Passport</span><i></i><span>EZ</span></button>
       <span class="o-lbl mono" style="right:26px">Passport</span>
+      <div class="pg" hidden></div>
       <div class="mdl" hidden></div>
     </section>
   </div>
 
   <div class="sh-notes" id="notes"></div>
-  <p class="sh-disc">Project names, summaries, destinations and images are placeholders. Wallet and ID open a placeholder sheet; the full pages from the earlier version plug in later.</p>
+  <p class="sh-disc">Project names, summaries, destinations and images are placeholders. Wallet, ID and the case study open as full pages inside each tab.</p>
 </div>
+<div class="lb" id="lb" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
@@ -334,6 +458,13 @@ const P = [
   { id: "p2", n: "02", title: "Project Two", kind: "Brand & web", year: "2025", role: "Designer + dev", desc: "One-line summary of the project and its outcome.", art: "b", c1: "#8fbf5a", c2: "#24331a", t1: "#9cc767", ton: "#141c0e", t2: "#24331a", son: "#d9f0bd", gfx: "bars", scene: "dunes", place: "desert dunes", code: "DUN", gate: "A2", tray: "#5f8f3a" },
   { id: "p3", n: "03", title: "Project Three", kind: "Design system", year: "2025", role: "Systems design", desc: "One-line summary of the project and its outcome.", art: "c", c1: "#161616", c2: "#efe9dc", t1: "#161616", ton: "#efe9dc", t2: "#efe9dc", son: "#161616", gfx: "grid", scene: "peaks", place: "snow peaks", code: "ALP", gate: "B1", tray: "#1b1b1d" },
   { id: "p4", n: "04", title: "Project Four", kind: "Interaction study", year: "2024", role: "Solo", desc: "One-line summary of the project and its outcome.", art: "d", c1: "#1f9a73", c2: "#ece9f6", t1: "#ece9f6", ton: "#161616", t2: "#1f9a73", son: "#ece9f6", gfx: "blobs", scene: "city", place: "city at night", code: "CTY", gate: "B2", tray: "#7a63d6" }
+];
+const E = [
+  { id: "e1", n: "01", title: "Type Study", kind: "Typeface experiment", cc: "#3846a8", ct: "#e9ecff", made: "MAR 2026", client: "Personal", tools: "Figma, Glyphs", hours: 14, iters: 9, coffee: 5, imgs: 6, note: "This one is on me :)", desc: "Placeholder: a display typeface drawn from airport signage. Six specimen sheets." },
+  { id: "e2", n: "02", title: "Shader Toy", kind: "Generative code", cc: "#c4583c", ct: "#fff1e8", made: "JAN 2026", client: "Personal", tools: "three.js, GLSL", hours: 22, iters: 31, coffee: 11, imgs: 4, note: "Worth every bug.", desc: "Placeholder: a small shader study. Stills from four of the variations.", link: "Open live demo ↗" },
+  { id: "e3", n: "03", title: "Tiny Tool", kind: "Web tool", cc: "#d9d6cd", ct: "#26251f", made: "NOV 2025", client: "Personal", tools: "Svelte", hours: 9, iters: 4, coffee: 3, imgs: 3, note: "Made in one weekend!", desc: "Placeholder: a one-weekend utility. Three screenshots and a link to try it.", link: "Try the tool ↗" },
+  { id: "e4", n: "04", title: "Printed Zine", kind: "Print", cc: "#5e7a4c", ct: "#eef4e2", made: "AUG 2025", client: "Self-published", tools: "InDesign, Risograph", hours: 30, iters: 6, coffee: 14, imgs: 8, note: "Ink still drying", desc: "Placeholder: a 16-page risograph zine. Eight spreads." },
+  { id: "e5", n: "05", title: "Art Commissions", kind: "Digital illustration", cc: "#1d1c22", ct: "#f2e19a", made: "2024–2026", client: "Various clients", tools: "Procreate, Photoshop", hours: 120, iters: 12, coffee: 40, imgs: 12, note: "Thank you, clients!", desc: "Placeholder: twelve commissioned pieces. Click any piece to view it large." }
 ];
 const TRAY = "#2448d8";
 const OV = { sky: ["#ffffff", "#2c5cc0"], coast: ["#ffffff", "#ffd9a8"], dunes: ["#ffffff", "#fff3dc"], peaks: ["#ffffff", "#ffffff"], city: ["#ffffff", "#ffd68e"] };
@@ -596,14 +727,172 @@ stages.forEach(k => {
     const ov = OV[p ? p.scene : "sky"]; st.style.setProperty("--ov1", ov[0]); st.style.setProperty("--ov2", ov[1]);
   };
   resets[k] = () => { cur = "~"; focus(""); };
-  st.addEventListener("pointerover", e => { if (!st.querySelector(".mdl").hidden) return; const t = e.target.closest("[data-p]"); focus(t ? t.dataset.p : ""); });
+  st.addEventListener("pointerover", e => { if (!st.querySelector(".mdl").hidden || !st.querySelector(".pg").hidden) return; const t = e.target.closest("[data-p]"); focus(t ? t.dataset.p : ""); });
   st.addEventListener("pointerleave", () => focus(""));
   st.addEventListener("focusin", e => { const t = e.target.closest("[data-p]"); if (t) focus(t.dataset.p); });
   st.addEventListener("click", e => {
-    if (e.target.closest("[data-mclose]")) { closeModal(k); return; }
-    const o = e.target.closest("[data-open]"); if (o) { openModal(k, o.dataset.open); return; }
-    const sh = e.target.closest("[data-sheet]"); if (sh) openSheet(k, sh.dataset.sheet);
+    const t = e.target;
+    if (t.closest("[data-mclose]")) { closeModal(k); return; }
+    const cs = t.closest("[data-case]"); if (cs) { openPage(k, "case", cs.dataset.case); return; }
+    if (t.closest("[data-home]")) { closePage(k); return; }
+    const pb = t.closest("[data-page]"); if (pb) { openPage(k, pb.dataset.page); return; }
+    const wc = t.closest("[data-wcard]"); if (wc) { if (wc.dataset.wcard !== wSel || !$("paper")?.firstElementChild) selectWallet(wc.dataset.wcard, true); return; }
+    const th = t.closest("[data-th]"); if (th) { const [eid, i] = th.dataset.th.split(":"); openLB(eid, +i); return; }
+    const o = t.closest("[data-open]"); if (o) { openModal(k, o.dataset.open); return; }
+    const sh = t.closest("[data-sheet]"); if (sh) openPage(k, sh.dataset.sheet);
   });
+});
+
+/* ---------------- wallet ---------------- */
+const WAVE = `<svg class="bk-wave" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M5 4.5a5 5 0 0 1 0 7"/><path d="M8 3a7.5 7.5 0 0 1 0 10"/><path d="M11 1.5a10 10 0 0 1 0 13"/></svg>`;
+const cardHTML = (e, i) => `<button class="bk" data-wcard="${e.id}" style="--cc:${e.cc};--ct:${e.ct};--i:${i}" aria-label="Show ${e.title}">
+    <span class="bk-top"><b>${e.title}</b><span>${e.imgs} pcs</span></span>
+    <span class="bk-mid"><span class="bk-chip"></span>${WAVE}</span>
+    <span><span class="bk-num">•••• •••• •••• 00${e.n}</span><span class="bk-name"><span>${e.kind}</span><span>${e.made}</span></span></span>
+  </button>`;
+function receiptHTML(e) {
+  const now = new Date();
+  const date = now.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric" }).toUpperCase();
+  const time = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toUpperCase();
+  const stars = "* ".repeat(40);
+  return `<div class="receipt" role="group" aria-label="Receipt for ${e.title}">
+    <button class="r-x" data-tear aria-label="Tear off receipt">×</button>
+    <div class="logo"></div><h3>${e.title}</h3>
+    <div class="tag">Receipt · Experiment ${e.n}</div>
+    <div class="small">Date: ${date}<br>Time: ${time} · Made: ${e.made}</div>
+    <div class="row small" style="margin-top:14px"><span>Description</span><span>Amount</span></div>
+    <div class="stars">${stars}</div>
+    <div class="row"><span>Pieces</span><span>${e.imgs}</span></div>
+    <div class="row"><span>Hours spent</span><span>${e.hours}</span></div>
+    <div class="row"><span>Iterations</span><span>${e.iters}</span></div>
+    <div class="row"><span>Cups of coffee</span><span>${e.coffee}</span></div>
+    <div class="stars">${stars}</div>
+    <div class="row small"><span>Client</span><span>${e.client}</span></div>
+    <div class="row small"><span>Made with</span><span>${e.tools}</span></div>
+    <div class="row small"><span>Total</span><span>$ 0.00</span></div>
+    <div class="row small"><span>Paid with</span><span>EZ card •••• 00${e.n}</span></div>
+    <div class="stars">${stars}</div>
+    <div class="thanks">Thank you for visiting</div>
+    <span class="r-note">${e.note}</span>
+  </div>`;
+}
+function printInto(paper, e) {
+  paper.innerHTML = receiptHTML(e);
+  const H = paper.firstElementChild.offsetHeight;
+  const a = paper.animate([{ height: "0px" }, { height: H + "px" }], { duration: reduce ? 1 : 1400, easing: "steps(28, end)", fill: "forwards" });
+  a.onfinish = () => { paper.style.height = H + "px"; a.cancel(); };
+  paper.onclick = ev => { if (ev.target.closest("[data-tear]")) { const r = paper.firstElementChild; r.animate([{ transform: "none", opacity: 1 }, { transform: "translate(-10px, 40px) rotate(-5deg)", opacity: 0 }], { duration: 300, easing: "ease-in" }).onfinish = () => { paper.innerHTML = ""; paper.style.height = "0px"; }; } };
+}
+const ASPECTS = [1, 0.78, 1.3, 0.72, 1.12, 1.5, 0.86];
+function thumbStyle(e, i) {
+  const ar = ASPECTS[(i * 3 + parseInt(e.n, 10)) % ASPECTS.length], swap = i % 2;
+  return { ar, cls: "abcd"[i % 4], style: `--c1:${swap ? e.ct : e.cc};--c2:${swap ? e.cc : e.ct}` };
+}
+let wSel = "e1";
+function walletDetail(e) {
+  const thumbs = Array.from({ length: e.imgs }, (_, i) => { const t = thumbStyle(e, i);
+    return `<button class="wl-th art art-${t.cls}" style="${t.style};aspect-ratio:${t.ar}" data-th="${e.id}:${i}" aria-label="View piece ${i + 1} of ${e.imgs}"><span class="n mono">${String(i + 1).padStart(2, "0")}</span></button>`; }).join("");
+  return `<div class="wl-detail">
+    <header class="wl-h"><span class="mono" style="color:var(--mute)">Experiment ${e.n} · ${e.kind} · ${e.imgs} pieces</span>
+      <h3 data-flap="${e.title}">${e.title}</h3><p>${e.desc}</p>${e.link ? `<div class="links mono"><span>${e.link}</span></div>` : ""}</header>
+    <div class="wl-body">
+      <div class="printer"><div class="printer-slot"></div><div class="paper-wrap" id="paper"></div></div>
+      <div><div class="wl-galhead mono"><span>Gallery</span><span>${e.imgs} pieces · click to enlarge</span></div><div class="wl-gal">${thumbs}</div></div>
+    </div></div>`;
+}
+function selectWallet(id, tap) {
+  wSel = id;
+  const e = E.find(x => x.id === id), stack = $("wl-stack");
+  stack.querySelectorAll(".bk").forEach(b => b.classList.toggle("on", b.dataset.wcard === id));
+  if (tap) { const b = stack.querySelector(`[data-wcard="${id}"]`); b.classList.remove("tap"); void b.offsetWidth; b.classList.add("tap"); }
+  $("wl-host").innerHTML = walletDetail(e);
+  flapAll($("wl-host"));
+  printInto($("paper"), e);
+}
+
+/* lightbox */
+let lbState = null;
+const lb = $("lb");
+function openLB(eid, i) {
+  const e = E.find(x => x.id === eid), t = thumbStyle(e, i);
+  lbState = { eid, i };
+  lb.innerHTML = `<div class="lb-top mono"><span>${e.title} · ${String(i + 1).padStart(2, "0")} / ${String(e.imgs).padStart(2, "0")}</span><button data-lbclose aria-label="Close viewer">×</button></div>
+    <div class="lb-stage"><button data-lbnav="-1" aria-label="Previous piece">←</button>
+      <div class="lb-img art art-${t.cls}" style="${t.style};aspect-ratio:${t.ar}" role="img" aria-label="${e.title}, piece ${i + 1}"></div>
+      <button data-lbnav="1" aria-label="Next piece">→</button></div>
+    <div class="lb-bot mono"><span>Placeholder caption: client, date, one line of context</span>
+      <div class="lb-strip">${Array.from({ length: e.imgs }, (_, j) => { const s = thumbStyle(e, j); return `<button class="art art-${s.cls}" style="${s.style}" data-lbgo="${j}" aria-label="Piece ${j + 1}" aria-current="${j === i}"></button>`; }).join("")}</div></div>`;
+  lb.hidden = false; lb.querySelector("[data-lbclose]").focus({ preventScroll: true });
+}
+function closeLB() { if (lb.hidden) return false; lb.hidden = true; lb.innerHTML = ""; lbState = null; return true; }
+function navLB(d) { const e = E.find(x => x.id === lbState.eid); openLB(e.id, (lbState.i + d + e.imgs) % e.imgs); }
+
+const flapAll = root => root.querySelectorAll("[data-flap]").forEach((el, i) => setTimeout(() => scramble(el, el.dataset.flap), i * 60));
+
+/* ---------------- pages ---------------- */
+let curStage = "1";
+const pageBar = view => `<div class="pg-bar"><button class="pg-back" data-home>← Flights</button><b>Eileen Zhang</b>
+  <nav class="pg-nav" aria-label="Main"><button data-page="home">Selected work</button><button data-page="wallet"${view === "wallet" ? ' aria-current="true"' : ""}>Wallet</button><button data-page="id"${view === "id" ? ' aria-current="true"' : ""}>ID</button></nav></div>`;
+function caseHTML(p) {
+  const nxt = P[(P.indexOf(p) + 1) % P.length];
+  const sec = (h, t) => `<div class="cs-sec"><h4>${h}</h4><p>${t}</p></div>`;
+  return `<div class="page"><article class="cs">
+    <div class="page-h"><h2 data-flap="${p.title.toUpperCase()}">${p.title}</h2><p>${p.desc}</p></div>
+    <div class="cs-hero art art-${p.art}" style="${artVars(p)}"></div>
+    <div class="cs-meta"><div><b>Role</b>${p.role}</div><div><b>Type</b>${p.kind}</div><div><b>Year</b>${p.year}</div><div><b>Flight</b>EZ${p.n} → ${p.code}</div></div>
+    ${sec("The brief", "Placeholder. One or two sentences on the problem and who it was for.")}
+    ${sec("What I did", "Placeholder. Process, key decisions and the work itself.")}
+    <div class="cs-sec"><h4>Selected frames</h4><div class="cs-gal">${["a", "b", "c"].map((a, i) => `<div class="art art-${a}" style="--c1:${i % 2 ? p.c2 : p.c1};--c2:${i % 2 ? p.c1 : p.c2}"></div>`).join("")}</div></div>
+    ${sec("Outcome", "Placeholder. What shipped, what changed, what you learned.")}
+    <div class="cs-next"><button data-home>← All flights</button><button data-case="${nxt.id}">Next flight: ${nxt.title} →</button></div>
+  </article></div>`;
+}
+const ID_HTML = `<div class="page">
+  <div class="page-h"><h2 data-flap="ID">ID</h2><p>About me, for the paperwork.</p></div>
+  <div class="idp">
+    <div class="idcard" id="idcard">
+      <header><b>Eileen Zhang</b><span>Passenger ID · EZ-2026</span></header>
+      <div class="id-photo">PHOTO</div>
+      <div class="id-fields">
+        <div><small>Surname</small><span>Zhang</span></div><div><small>Given name</small><span>Eileen</span></div>
+        <div class="wide"><small>Occupation</small><span>Designer &amp; developer</span></div>
+        <div><small>Based in</small><span>Placeholder</span></div><div><small>Issued</small><span>Oct 2026</span></div>
+        <div><small>Flights</small><span>04</span></div><div><small>Seat</small><span>01A · Window</span></div>
+      </div>
+      <div class="id-mrz">P&lt;EZ&lt;ZHANG&lt;&lt;EILEEN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div>
+    </div>
+    <div class="bio">
+      <p>Placeholder bio. I design and build interfaces, and I care about the small moments that make software feel considered.</p>
+      <p style="color:var(--mute)">Two more sentences about how you work, what you are looking for, and something personal.</p>
+      <dl><dt>Now</dt><dd>Placeholder role, placeholder studio</dd><dt>Before</dt><dd>Placeholder · Placeholder</dd><dt>Tools</dt><dd>Figma, three.js, Svelte</dd><dt>Contact</dt><dd>Email ↗ · Read.cv ↗ · Instagram ↗</dd></dl>
+    </div>
+  </div></div>`;
+const WALLET_HTML = () => `<div class="page">
+  <div class="page-h"><h2 data-flap="WALLET">Wallet</h2><p>Experiments, side projects and commissions. Pick a card: its receipt prints with the details, and the work appears beside it.</p></div>
+  <div class="wl"><div><div class="wl-stack" id="wl-stack">${E.map(cardHTML).join("")}</div><p class="wl-hint mono">05 cards · pick one</p></div><div id="wl-host"></div></div></div>`;
+function closePage(k) { const pg = document.querySelector(`#s-${k} .pg`); if (!pg || pg.hidden) return false; pg.hidden = true; pg.innerHTML = ""; return true; }
+function openPage(k, view, id) {
+  stages.forEach(closePage); closeModal(k); closeLB();
+  if (view === "home") return;
+  const pg = document.querySelector(`#s-${k} .pg`);
+  pg.innerHTML = pageBar(view) + (view === "wallet" ? WALLET_HTML() : view === "id" ? ID_HTML : caseHTML(P.find(x => x.id === id)));
+  pg.hidden = false; pg.scrollTop = 0;
+  flapAll(pg);
+  if (view === "wallet") selectWallet(wSel, false);
+  if (view === "id") {
+    const card = $("idcard");
+    card.addEventListener("pointermove", e => { const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      card.style.setProperty("--ry", (x * 14).toFixed(2) + "deg"); card.style.setProperty("--rx", (-y * 12).toFixed(2) + "deg"); card.style.setProperty("--sh", (x * 120).toFixed(0) + "%"); });
+    card.addEventListener("pointerleave", () => { card.style.setProperty("--ry", "0deg"); card.style.setProperty("--rx", "0deg"); card.style.setProperty("--sh", "-40%"); });
+  }
+  pg.querySelector(".pg-back").focus({ preventScroll: true });
+}
+document.addEventListener("click", e => {
+  if (!lbState) return;
+  const t = e.target;
+  if (t.closest("[data-lbclose]") || t === lb) { closeLB(); return; }
+  const ln = t.closest("[data-lbnav]"); if (ln) { navLB(+ln.dataset.lbnav); return; }
+  const lg = t.closest("[data-lbgo]"); if (lg) openLB(lbState.eid, +lg.dataset.lbgo);
 });
 
 /* ---------------- pop-ups ---------------- */
@@ -617,19 +906,7 @@ function openModal(k, id) {
         <h3>${p.title}<em>${p.place}</em></h3>
         <p>${p.desc} Placeholder: two sentences on the problem, who it was for, and what you did.</p>
         <dl class="mdl-dl"><div><dt>Role</dt><dd>${p.role}</dd></div><div><dt>Type</dt><dd>${p.kind}</dd></div><div><dt>Timeline</dt><dd>Placeholder</dd></div><div><dt>Gate</dt><dd>${p.gate}</dd></div></dl>
-        <button class="mdl-cta">Read the full case study ↗</button>
-      </div>
-    </article>`;
-  box.hidden = false; box.querySelector(".mdl-x").focus({ preventScroll: true });
-}
-function openSheet(k, which) {
-  const box = document.querySelector(`#s-${k} .mdl`), w = which === "wallet";
-  box.innerHTML = `<div class="mdl-back" data-mclose></div>
-    <article class="mdl-card sheet" role="dialog" aria-modal="true" aria-label="${w ? "Wallet" : "ID"}">
-      <div class="mdl-body">
-        <div class="mdl-top mono"><span>${w ? "Side projects · 05 cards" : "About me"}</span><button class="mdl-x" data-mclose aria-label="Close">×</button></div>
-        <h3>${w ? "Wallet" : "ID"}<em>${w ? "side quests" : "passenger details"}</em></h3>
-        <p>${w ? "Placeholder. This opens the Wallet page from the earlier version: the card stack, the receipt printer and each experiment's gallery." : "Placeholder. This opens the ID page from the earlier version: the passenger ID card and your bio."}</p>
+        <button class="mdl-cta" data-case="${p.id}">Read the full case study ↗</button>
       </div>
     </article>`;
   box.hidden = false; box.querySelector(".mdl-x").focus({ preventScroll: true });
@@ -649,9 +926,10 @@ const NOTES = {
          ["Count", "Three projects, as in your sketch."]],
   "3": [["Sketch 3", "Name centered, no nav bar. The wallet in the bottom-left corner, the ticket book along the bottom with names showing, the passport in the bottom-right corner."],
         ["Hover", "The wallet and passport lift; passes rise out of the book and change the view, words and tag."],
-        ["Click", "Passes open the project pop-up; the wallet and passport open placeholder sheets for now."]]
+        ["Click", "Passes open the project pop-up, and its button opens the full case study. The wallet opens the Wallet page and the passport opens the ID page."]]
 };
 function show(k) {
+  curStage = k; stages.forEach(closePage); closeLB();
   stages.forEach(x => { $("s-" + x).hidden = x !== k; $("tab-" + x).setAttribute("aria-selected", x === k); });
   $("notes").innerHTML = NOTES[k].map(([h, t]) => `<div class="sh-note"><h3>${h}</h3><p>${t}</p></div>`).join("");
   resets[k]();
@@ -661,7 +939,9 @@ function show(k) {
 }
 document.querySelectorAll(".sh-tab").forEach(t => t.addEventListener("click", () => show(t.dataset.k)));
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") stages.forEach(closeModal);
+  if (lbState) { if (e.key === "Escape") closeLB(); else if (e.key === "ArrowRight") navLB(1); else if (e.key === "ArrowLeft") navLB(-1); return; }
+  if (e.key === "Escape") { const m = document.querySelector(`#s-${curStage} .mdl`); if (m && !m.hidden) closeModal(curStage); else closePage(curStage); return; }
+  if (e.target.closest && e.target.closest(".pg")) return;
   const i = ["1", "2", "3", "4"].indexOf(e.key);
   if (i > -1 && !e.metaKey && !e.ctrlKey) show(stages[i]);
 });
