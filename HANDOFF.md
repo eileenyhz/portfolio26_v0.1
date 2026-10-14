@@ -43,7 +43,109 @@ The **current direction** is her own three hand sketches (see §5), built in `po
 
 | File | What it is | Published artifact |
 |---|---|---|
-| `portfolio-sketches.html` | **Current work.** 4 tabs built from Eileen's 3 sketches (sketch 2 in two versions), with Wallet, ID and case study pages. | https://claude.ai/artifact/D1vJx5B9faGCjkQRhThFsi |
+| `portfolio-s1.html` | **Current work (chosen direction: sketch 1).** Full-screen page. Tickets follow her ticket wireframe (type/date row, name, mark on a stem, role tab, description, preview, hatched stub). Tickets are 16cqw wide with round corners. Wallet page (simplified on request, "UX first, then design"): the original vertical card stack (only PROJ. TYPE strips show; the chosen card opens up in place), the receipt under a binder clip next to it on the left, and on the right a plain grey "file" with the text zone and every photo (click → viewer). An earlier folder version (pocket, spine, scattered pieces) was rejected as too fancy. Cards follow her card wireframe, five designs. `#wallet` / `#id` deep-link. Style brief from Eileen: a sleek, minimal take on Persona 3 / Hypergryph UI. | https://claude.ai/artifact/7MfqtV6aGy1nFdhqdJ8pzZ |
+| `portfolio-lab.html` | Experiment (2026-10-13): live sketch-1 mock-up with 10 type treatments for WELCOME ABOARD (keys 1–0; round 2 kept Jost, Big Shoulders, Stencil, Doto and added Tektur, Grenze Gotisch, Monoton, Zen Tokyo Zoo, Libre Barcode 128 Text, Tourney; WELCOME shifted left to -.62ws) × ticket designs, all white until hover, each a different paper shape so they differ while tucked (N = now, A perforated, B dog-ear = top-right corner folded down, unfolds on hover (clip-path + rotate3d flap; the domed "window" B was rejected), C admit one = concave die-cut corners + ADMIT ONE down both edges, D stamp = perforated all round + punched-hole tear row, E bag tag = rounded top, oval strap slot (mask) + string loop (`STRAP` svg in the wrapper, outside the masked pass) + vertical airport code (the clipped-corner + eyelet version read as an archive folder), F boarding stub = the kept portion of a boarding pass, torn perforation on the LEFT edge; keys N, A–F). Round 2's reference-based B–F were rejected as too similar. Ticket names follow the type. Each type is sized so WELCOME matches the Jost Light width and each ticket name fills the same width; these values (`--wfs`, `--nfs` per `.ty-N`) were measured once and are hard-coded in CSS. Do NOT measure at load: the artifact viewer can load the page hidden, measurements return 0, the size became NaN and WELCOME ABOARD rendered at 0px. The three.js window uses a ResizeObserver for the same reason (both files). Below: fixes at full size and 10 small mock-ups (window shown as a still from `W3.snapshot()`). Deep link `#t3-C`. **Eileen's pick (2026-10-13): type 7 (Doto dot matrix) + ticket F (boarding stub: torn perforated left edge, interior now laid out like A–D so the black role tab reads at rest; stub carries EZA → code and a stacked barcode).** The lab opens on 7-F. For type 7 the hover transition is a pixel dissolve (`pixelWord` + `dotGrid`: canvas-drawn random-cell mask whose cells are exactly Doto's dot grid — 0.1em pitch, each glyph 6 dots wide, grid anchored on the first letter's left edge and on the baseline — so whole dots switch on and off; type 7 has letter-spacing 0 so every letter stays on the grid; mask shared by the word and its glass copy, setTimeout-timed) instead of the GSAP roll. Carried into `portfolio-s1.html` on 2026-10-13: Doto words (700, `calc(var(--wh) * .29)`, letter-spacing 0, `.w1` at -.62ws), Doto 900 ticket names, the pixel dissolve (`pixelWord`/`dotGrid`, ~0.25s) replacing the GSAP roll, and the F boarding-stub ticket as the only pass design (white, drop shadow, torn left edge, right notch at the stub, stub with EZA → code + stacked barcode). Page headings (WALLET, ID, case titles) are still Jost.
+
+**Temporary (2026-10-13):** Wallet and ID are blurred and inert (`.pg.wip`) under a sticky note: "EZ is working on this rn, come back later :)", in Gochi Hand (Eileen's pick; capital EZ avoids the "e3" look). The header stays usable. To undo, remove `WIP_NOTE` and the `wip` class in `openPage`.
+
+**Details pass (2026-10-13):**
+- **Order:** Motif (flagship), then newest first: ShanHai 2025, PixAI 2023, Dreamin 2022. Flight numbers follow the order: EZ01 MTF, EZ02 SHH, EZ03 PXA, EZ04 DRM.
+- **Hero:** words are name + year; the hover tag shows the flight (`EZ02 · SHH`).
+- **Centring:** the tickets, the WELCOME ABOARD block and the visible window frame all sit on the page centre:
+  - the deck is at 15.6 / 33.2 / 50.8 / 68.4cqw;
+  - the window box sits `.009wh` right of centre to offset its 0.24rad turn;
+  - `.w1` is at -.828ws and `.w2` at .252ws.
+- **Ticket colours, a set of four (dark, light, light, dark):**
+  - Motif: cobalt + yellow;
+  - ShanHai: cream + seal red;
+  - PixAI: lavender #e4dcfe + violet #6b3ae6;
+  - Dreamin: night navy #1b2147 + lantern amber #f2a65a.
+- **Pop-up:**
+  - picture panels are tinted per project (`pv`); Dreamin's is dark (`dark: true`);
+  - Dreamin's opening shows the whole game frame;
+  - the pass is 760px max, with tighter spacing on screens 760px tall and under;
+  - an opened step scrolls into view;
+  - the 3D window pauses while a pass is open (`W3.pause`);
+  - Tab stays inside the pass;
+  - the stub has a ← Prev button; "All flights" closes the pass.
+- **Header:** Wallet and ID use the landing header in the same place: name on the left (goes home), nav on the right. The page fade no longer slides up, and the stage is `overflow: clip` so focus can't scroll it. Nav greys are darker (`--mute`).
+- **Phones (stage under 600px):** words fit the width and centre on the window; the tickets are a swipeable row of 150px tickets; the hover tag is hidden.
+
+**Content (2026-10-13, latest):**
+- Tickets:
+  - P1: Mōtif · Agentic fashion · 2024 · "Co-founder · Design";
+  - P2: PixAI · AI art generator · 2023 · "PM · UI/UX". Visit link: pixai.art/en. Full case from `pixai-content.html`:
+    - three steps: guided model upload, daily rewards, sorted notifications;
+    - outcome: CTR 3% → 12%, +18% daily engagement, +7% feature adoption from A/B tests on core flows;
+    - team: Raven G. (CEO);
+    - cover: a hand-placed collage (`cls: "collage"`, position per screen) of the task hub, guided upload and notifications on a lavender tint;
+    - ticket image: the two notification screens;
+    - no "+" rows. The model-detail screen and upload iterations were dropped;
+  - P3: Dreamin · GenAI game engine · 2022 · "Design lead", full case from `dreamin-content.html`;
+  - P4: ShanHai on the ticket, "Stories of ShanHai" in the pop-up (`long`) · Indie game · 2025 · "Art · UI/UX".
+- Roles with several parts use " · ", not commas.
+- One-line ticket names set `--nup: 8.2cqh`, which lifts the role tab, rule and blurb under the name and makes the preview taller.
+- Dream!n:
+  - the outcome is 50k MAU in the first month, 3 games per user a week, backed by Miracle Plus;
+  - the team is Felix W. and Allen Z.;
+  - the screens are 2026 reconstructions, and the case says so;
+  - the >80% "want to make a game" figure is left out: its source is pending.
+- Each case has `extras` (the "+" rows): Motif has style-card polaroids; ShanHai has UI system and Characters and buildings. Game loop was removed at Eileen's request.
+
+**Content (2026-10-13, earlier): projects 1 and 4 are real.**
+- P1 is Mōtif and P4 is Stories of ShanHai. P2 and P3 stay placeholders; Dream!n and PixAI are unfinished.
+- Case studies live in the ticket pop-up; there is no separate case page. The pop-up:
+  - is laid out for one focal point: a text column on the left (title, pitch, outcome, problem, then the steps as a list with one step open at a time) and one large picture on the right for the open step. On phones the picture sits inside the open step;
+  - has two columns: the text on the left (the ticket's type and date row and the name in Doto, the pitch, a What / For / Team / Outcome list, the problem, then the steps) and the picture panel on the right;
+  - has the boarding-pass shape: the ticket's perforated left edge, rounded right corners and stub notch;
+  - has a pinned footer that is the stub, in the ticket's stub colours. It holds "← All flights", Boarding stub · Seq · EZA → code, and "Next flight". There is no barcode, which read as confusing;
+  - runs a tour when opened. The full-screen opening was dropped at Eileen's request, so the pass opens half text and half picture:
+    - the cover shows for 5s: Motif shows the UI collage cropped from `motif_2025.pdf` page 5; ShanHai shows the complete restored world (`sh-world.jpg`). The scroll illustration is a draft; don't use it;
+    - then the steps open one by one with their screens, 8s each, and loop back to the cover;
+    - clicking a step stops the tour;
+    - phones, reduced motion and placeholders get no tour;
+  - Team lists collaborators only, with last initials;
+  - each step shows two screens:
+    - ShanHai steps (stacked): empty scroll and first courtyard; expedition and web MVP; halfway restored and `shanhai_cc1` (farmhouse upgrade);
+    - Motif step 3: style profile and Designer DNA;
+  - Motif's style cards are drawn as the app's polaroids: picture, #tag, lv., progress bar.
+- The three-column version with the real ticket on a rail was tried and rejected (backup `s1-popup-v4-3col.html` in the scratchpad).
+- Doto has no Ō, so the Motif ticket name and hero word use a plain O.
+  - switches flights with the left and right arrow keys;
+  - uses only Inter Tight for text and Geist Mono for small labels; bold marks what matters, grey what supports it.
+- Each case study (`CS` in `portfolio-s1.html`) follows the mentor's frame:
+  - overview: what, for whom, role, collaborators;
+  - outcome numbers;
+  - one big pain point;
+  - the user flow split before, while and after, each with a sub-pain;
+  - one solution and screen per part;
+  - a look and visuals strip.
+- Facts come from `motif_2025.pdf`, `SH_2025.pdf` and `motif-agent-content.html`. The Motif framing is the three agents: Wardrobe Keeper, Personal Stylist and Style Analyst.
+- Images are resized copies in `img/`, taken from `~/Desktop/portfolio26_content_prep` (`figma_materials`, `resources`). They are published with the artifact through `files`.
+- Tickets:
+  - they show real screens in the preview;
+  - names can be split into `lines`, and long names shrink to fit;
+  - `hero` sets the two words that replace WELCOME ABOARD.
+- Scene changes: P4 shows the mountain view (`peaks`) and P3 the night city.
+- Jost misplaces the macron on Ō, so the Motif case heading uses `head: "Motif"`.
+- Not committed. The repo is public, so ask before committing the images or the collaborator names.
+
+**Window, current (2026-10-13, final for now): reverted to the beginning version.** After comparing side by side, Eileen preferred the first window, so `portfolio-s1.html` is back to it exactly: the flat panel (outer ring, ring, extruded bezel with near-black inner walls, no shade) and painted glass views (`paintGlass`, `SCN`, `cumulus`, `wing`) that cross-fade with GSAP. Scenes: sky / coast / dunes / peaks / city (p1 coast SEA, p2 dunes DUN, p3 peaks ALP, p4 city CTY); letters over the glass use the original `OV`. Every experiment after it was discarded: toon cabin window, crayon views, window lab, Aviator world, minimal geometric world, and a low-poly rebuild of the beginning scenes. Their notes below are history only; backups are in the session scratchpad.
+
+**Window, superseded (2026-10-13):** the original flat panel (#d4d8e6 / #a8b2c4 / bezel with #0b0d12 walls, MeshBasic) with the shade pushed fully up, and through it the live low-poly world pared down to the portfolio's graphic language: flat single-colour skies (scene background + matching fog), plain white lights (hemisphere + one key, no pink ambient) so facets read as flat tones, no cube clouds (replaced by three clean flattened icosahedron clouds drifting across), and each destination coloured from its project's ticket: default = pale #eef1f7 sky over a cobalt #2448d8 faceted sea; p1 coast = cobalt sea + yellow #f4c430 faceted sun; p2 fields = #9cc767 hills + #24331a cone trees; p3 dunes = sand #dcc9a3 + black cacti and a black faceted sun; p4 city = lavender ground + #1f9a73 buildings with lavender windows. Project → scene mapping changed: p2 fields, p3 dunes. Letters over the glass use the ticket colours (`OV`).
+
+**Window, superseded refinement (2026-10-13):** the world flows slower (ground roll .00016 rad/frame, wave speed .008–.023); the horizon sits on the lower third of the glass (camera at y 230 looking at (0, 256, -790)); the ground is a much larger cylinder (R 3000, 200×17 segments, 1700 long) so the horizon reads almost straight; fog 700–2600; clouds are refined low-poly cumulus (4–5 icosahedron puffs on a flattened base, emissive white .32); props are respread over z -230…-1160; the sun is r170 at (260, -20, -2200).
+
+**Comparison:** `portfolio-window-compare.html` (https://claude.ai/artifact/HLmmNxpi1Nr83BEvY7r3XB) shows the first window from the sketch mock-ups (painted gradient views + wing, GSAP crossfade) beside the current one, both driven by the same destination buttons. Its two windows are copied from `s1-before-window.html` (scratchpad backup) and `portfolio-s1.html`; it does not update when s1 changes. Note the old project order was sky / coast / dunes / peaks / city.
+
+**Window, previous (after Eileen chose the style of Codrops' "The Aviator"):** `portfolio-s1.html` renders a live low-poly world into the glass through a render target: an Aviator-style rolling cylinder (radius 600, waves driven by a position hash so the seam never cracks), cube-cluster clouds on a slower ring, fog, hemisphere + pink ambient + directional light with soft shadows, and a gradient sky card. Destinations (`DEST`) ease their colours and grow props in and out: sky = Aviator sea, coast = low-poly sun, dunes = sand with cacti, fields = green with cone trees, city = night buildings with lit windows. The panel is a faceted, bevelled warm-white frame (MeshPhong flatShading, curveSegments 7) with a dark seal and the shade pushed fully up. Letters over the glass: Aviator red over sky, white over sea/ground. No wing (removed; it read as a grey sliver). The window lab still shows the older options.
+
+**Window, before that:** `portfolio-s1.html` had the previous panel with the shade pushed fully up (only its lip and grip show; no blink, the view cross-fades again) and hand-drawn crayon views after Eileen's crayon reference (`paper()`, `tooth()` paper grain on a crayon layer and a pencil layer, `rough()` wobbly outlines, `pencil()`, looping contrails, `sparkle()`); no wing. Letters over the glass take the drawing's crayon colour. **`portfolio-window-lab.html`** (new, https://claude.ai/artifact/F8ewnQXFk3yYkMDVqvgX5p) mixes panel (Classic / Ink line / Slim with dimming tint), rendering (Crayon / Poster / Riso two-ink halftone over the poster drawing) and wing (Swept / Engine / Tip / None); stills of all 9 panel × rendering pairs and 4 wings come from a second WebGL renderer so the live view never flickers. Waiting on Eileen's pick.
+
+**Window, earlier state (`portfolio-s1.html`):** the previous flat panel (outer ring, ring, extruded bezel with near-black inner walls) plus a flat pull-down shade (basic-material plate clipped by a world-space plane at its bottom edge, a #a8b2c4 lip, a grip and a thin translucent shadow on the glass). Shade rests at 20% of the glass; a new view blinks it shut and lifts it again (lerp .34, ~0.45s). Views: one flat sky colour each, organic flat clouds (`cloud()`: flat base + scalloped quadratic top, one flat shadow band; the deck clouds have none), contrail on the default sky, cel-shaded dunes, patchwork fields with the plane's shadow, flat city, printed grain 16. **Rejected the same day:** a toon-shaded lofted cabin window with stepped sky bands ("looks worse than the previous version"); notes below describe it for reference only.
+
+Rejected toon version: a cabin window built from lofted rounded-rect outlines (`ring` + `loft`): plastic surround face + rim, a deep reveal tapering from 240×366 to 196×316 over 50 units, a dark seal, the glass (ShapeGeometry with remapped UVs), and a pull-down shade (toon plane clipped by a world-space clipping plane at its bottom edge, plus a lip bar and grip). Toon shading: MeshToonMaterial with a 3-step NearestFilter ramp, ambient .46 + directional .56 from the upper left, so faces read as flat bands. Shade covers 30% at rest (WELCOME ABOARD), 14% on a project; changing the view blinks it shut (~0.2s), swaps the texture, and lifts it (~0.45s total). The shade fraction is pushed to CSS `--shade` and `.w-mask` uses `clip-path: inset(var(--shade))` so the letters only recolor over open glass. Views repainted flat (stepped bands, two-tone hard-edged clouds via `cloud()`, cel-shaded dunes, perspective patchwork fields with the plane's shadow after Eileen's poster reference, flat night city) with a printed grain (`grain()`); "peaks" became "fields" (p3 code FLD). Rendering references: a flat cel-shaded 3D street scene and a flat blue/green plane-and-shadow poster. | https://claude.ai/artifact/TrVWmT9F1u8Mf29rE2sXpX |
+| `portfolio-sketches.html` | The 4-tab comparison of her 3 sketches (sketch 2 in two versions), with Wallet, ID and case study pages. Kept as a record. | https://claude.ai/artifact/D1vJx5B9faGCjkQRhThFsi |
 | `portfolio-concepts.html` | Earlier 3-concept mock-up (side window / train carriage / gate reader). | https://claude.ai/artifact/67KonwdfUSAbEmBsr7NdZH |
 | `portfolio.html` | Single-page site, last state = white Hiroto-style "object cluster" (rejected as ugly). Contains the full **Wallet page** (card stack + receipt printer + gallery + lightbox) and **ID page** (tilting ID card) to reuse. | https://claude.ai/artifact/JHbJkSKqaPCnVbudx2jaia |
 | `portfolio-grid-draft.html` | Previous single-page version (grid hero, GSAP split intro, bottom ticket dock). Kept as draft. | (was v2 of the link above) |
@@ -82,8 +184,8 @@ Clicks: passes / tk2 tickets → project pop-up (`openModal`); its "Read the ful
 
 ## 6. Unfinished tasks and next steps
 
-- **Waiting on Eileen's choice** among the four sketch tabs (and any further visual feedback). Do not start the production build before she picks.
-- Then: build the chosen layout as the real site. The Wallet, ID and case study pages are already wired into every tab of `portfolio-sketches.html` (code reused from `portfolio.html`).
+- Eileen picked **sketch 1**; it now lives in `portfolio-s1.html`. Waiting on her feedback on the new tickets, cards and wallet folder.
+- Not yet restyled to the new look: the ID page and the case study page (still the earlier versions).
 - Replace placeholder content (project names, summaries, colors, destinations, images, bio, links).
 - Possibly use a real sky/clouds photo for the window glass if Eileen supplies one (she has a photo-like reference; current clouds are painted in canvas).
 - Mobile layouts for the sketch tabs are only proportional scaling; the chosen direction needs a real phone layout.
