@@ -449,16 +449,18 @@ test.describe("a mouse window at the breakpoint (800 px)", () => {
   test("resizing across it changes the layout smoothly", async ({ page }) => {
     await page.goto("/");
     const at800 = await ticketsOn(page);
+    // the ticket glides to its new place: the browser starts a transition of its position. Listening for that event,
+    // rather than catching the ticket mid-way, holds however slowly the machine draws (CI draws WebGL in software)
+    const slot = page.locator(".deck .dslot").first();
+    await slot.evaluate((el) => {
+      el.dataset.glide = "";
+      el.addEventListener("transitionrun", (e) => (el.dataset.glide += ` ${(e as TransitionEvent).propertyName}`));
+    });
     await page.setViewportSize({ width: 799, height: 858 });
-    // straight after the resize the ticket is on its way, not already there: it glides
-    const leaving = await page
-      .locator(".deck .tk")
-      .first()
-      .evaluate((el) => el.getBoundingClientRect().top);
+    await expect(slot).toHaveAttribute("data-glide", /\b(left|top)\b/);
     await page.waitForTimeout(900);
-    const end = (await ticketsOn(page))[0];
-    expect(Math.abs(leaving - end.top)).toBeGreaterThan(10);
     // and it keeps its size: only the arrangement changes
+    const end = (await ticketsOn(page))[0];
     expect(Math.abs(end.width - at800[0].width)).toBeLessThan(4);
   });
 });
