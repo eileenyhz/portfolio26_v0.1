@@ -1,0 +1,40 @@
+---
+import { PROJECTS } from "../data/projects";
+import type { Project } from "../data/types";
+import { sheetHTML } from "../lib/case-study";
+import Base from "../layouts/Base.astro";
+import Header from "./Header.astro";
+import Intro from "./Intro.astro";
+import TicketDeck from "./TicketDeck.astro";
+import WindowBox from "./WindowBox.astro";
+
+interface Props {
+  /** Open this project's case study on arrival (the /work/{slug} pages). */
+  open?: Project;
+}
+const { open } = Astro.props;
+// a case study's page carries its sheet in the HTML itself, so it reads without scripts and shows at once
+const next = open && PROJECTS[(PROJECTS.indexOf(open) + 1) % PROJECTS.length];
+const sheet = open && next ? `<div class="mdl-back" data-mclose></div>${sheetHTML(open, next)}` : "";
+---
+
+<Base
+  title={open ? `${open.long ?? open.title} · Eileen Zhang` : undefined}
+  description={open?.meta}
+  image={open && `/og/work-${open.slug}.jpg`}
+>
+  <main class="stage" id="stage" data-open={open?.id}>
+    <h1 class="sr-only">
+      {open ? `${open.long ?? open.title}, a case study by Eileen Zhang` : "Eileen Zhang, selected work"}
+    </h1>
+    <Header variant="landing" current="home" />
+    <WindowBox />
+    <TicketDeck />
+    <div class="mdl" hidden={!open} set:html={sheet} />
+  </main>
+  {!open && <Intro />}
+</Base>
+
+<script>
+  import "../scripts/landing";
+</script>

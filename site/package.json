@@ -1,0 +1,52 @@
+{
+  "name": "eileen-z-portfolio",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "dev:down": "SITE_DOWN=1 astro dev --port 4324 --ignore-lock",
+    "dev:wip": "SITE_WIP=1 astro dev --port 4326 --ignore-lock",
+    "build": "astro build",
+    "preview": "astro preview",
+    "og": "node scripts/og.mjs",
+    "icons": "node scripts/icons.mjs",
+    "images": "node scripts/images.mjs",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "compare:s1": "PARITY_TARGET=s1 playwright test -c playwright.parity.config.ts --update-snapshots=all && playwright test -c playwright.parity.config.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/markdown-satteri": "^0.4.3",
+    "@astrojs/mdx": "^8.0.3",
+    "@astrojs/react": "^7.0.1",
+    "@nanostores/react": "^2.0.1",
+    "@react-three/fiber": "^9.8.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "astro": "^7.3.8",
+    "gsap": "^3.15.0",
+    "nanostores": "^1.5.5",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^22.20.5",
+    "@types/three": "^0.186.0",
+    "prettier": "^3.9.10",
+    "prettier-plugin-astro": "^1.1.1",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.4"
+  },
+  "private": true,
+  "description": "Eileen Zhang portfolio: EZ Air"
+}

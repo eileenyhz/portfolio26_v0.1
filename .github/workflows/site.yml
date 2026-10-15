@@ -1,0 +1,84 @@
+# The Astro site in site/: formatting, type-check, unit tests, build, end-to-end tests against the build, then (on request) deploy
+# to GitHub Pages. Deploying runs only when started by hand from the Actions tab, until Pages is switched from the
+# s1-site branch to GitHub Actions.
+name: Site
+
+on:
+  push:
+    paths: ["site/**", ".github/workflows/site.yml"]
+  pull_request:
+    paths: ["site/**", ".github/workflows/site.yml"]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy the build to GitHub Pages
+        type: boolean
+        default: false
+      down:
+        description: Take the site down (every page shows the preparing screen)
+        type: boolean
+        default: false
+      wip:
+        description: Put the sticky note over Playground and About
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: site
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run check
+      - run: npm test
+      # the browser tests build their own copy with the switches off (see playwright.config.ts)
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          CI: "true"
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: site/test-results
+          retention-days: 7
+      # what ships: the switches in src/site-switches.ts, or the ones ticked when the workflow is started by hand
+      - name: Build the site to ship
+        run: npm run build
+        env:
+          SITE_DOWN: ${{ inputs.down && '1' || '' }}
+          SITE_WIP: ${{ inputs.wip && '1' || '' }}
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site/dist
+
+  deploy:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

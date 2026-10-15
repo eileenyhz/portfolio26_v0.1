@@ -1,0 +1,86 @@
+---
+import Header from "../components/Header.astro";
+import WipNote from "../components/WipNote.astro";
+import Base from "../layouts/Base.astro";
+import { SWITCHES } from "../site-switches";
+---
+
+<Base title="About · Eileen Zhang" description="About Eileen Zhang.">
+  <main class="stage">
+    <div class:list={["pg", { wip: SWITCHES.wip }]}>
+      <Header variant="page" current="about" />
+      <div class="page" inert={SWITCHES.wip}>
+        <div class="page-h">
+          <h1 data-flap="ABOUT">About</h1>
+          <p>For the paperwork.</p>
+        </div>
+        <div class="idp">
+          <div class="idcard" id="idcard">
+            <header>
+              <b>Eileen Zhang</b>
+              <span>Passenger ID · EZ-2026</span>
+            </header>
+            <div class="id-photo">PHOTO</div>
+            <div class="id-fields">
+              <div>
+                <small>Surname</small>
+                <span>Zhang</span>
+              </div>
+              <div>
+                <small>Given name</small>
+                <span>Eileen</span>
+              </div>
+              <div class="wide">
+                <small>Occupation</small>
+                <span>Designer &amp; developer</span>
+              </div>
+              <div>
+                <small>Based in</small>
+                <span>Placeholder</span>
+              </div>
+              <div>
+                <small>Issued</small>
+                <span>Oct 2026</span>
+              </div>
+              <div>
+                <small>Flights</small>
+                <span>04</span>
+              </div>
+              <div>
+                <small>Seat</small>
+                <span>01A · Window</span>
+              </div>
+            </div>
+            <div class="id-mrz">
+              P&lt;EZ&lt;ZHANG&lt;&lt;EILEEN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+            </div>
+          </div>
+          <div class="bio">
+            <p>
+              Placeholder bio. I design and build interfaces, and I care about the small moments that make software feel
+              considered.
+            </p>
+            <p style="color:var(--mute)">
+              Two more sentences about how you work, what you are looking for, and something personal.
+            </p>
+            <dl>
+              <dt>Now</dt>
+              <dd>Placeholder role, placeholder studio</dd>
+              <dt>Before</dt>
+              <dd>Placeholder · Placeholder</dd>
+              <dt>Tools</dt>
+              <dd>Figma, three.js, Svelte</dd>
+              <dt>Contact</dt>
+              <dd>Email ↗ · Read.cv ↗ · Instagram ↗</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+      {SWITCHES.wip && <WipNote />}
+    </div>
+  </main>
+</Base>
+
+<script>
+  import "../scripts/id-page";
+</script>

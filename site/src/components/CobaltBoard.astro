@@ -1,0 +1,44 @@
+---
+import { chars } from "../lib/format";
+
+// A full cobalt screen with a dot-matrix board in the middle, like a departures sign: the preparing screen and the 404.
+// The board builds its first message dot by dot, then cycles through the rest (src/scripts/board.ts).
+interface Props {
+  /** The small status beside the blinking light, top right. */
+  status: string;
+  /** What the board says, for screen readers and search (the board itself is drawn). */
+  heading: string;
+  /** The board's messages, two lines each; the first is shown first. */
+  messages: [string, string][];
+}
+const { status, heading, messages } = Astro.props;
+const [first] = messages;
+---
+
+<main class="pp">
+  <!-- the board's words wait, hidden, for the script to build them dot by dot (shown anyway if it never runs) -->
+  <script is:inline>
+    document.documentElement.classList.add("pp-js");
+  </script>
+  <header class="pp-top">
+    <span class="pp-name">Eileen Zhang</span>
+    <span class="pp-status mono">
+      <i aria-hidden="true"></i>
+      {status}
+    </span>
+  </header>
+  <h1 class="sr-only">{heading}</h1>
+  <div class="pp-board" aria-hidden="true" data-messages={JSON.stringify(messages)}>
+    {first.map((line) => (
+      <div class="pp-line" data-t={line} set:html={chars(line)} />
+    ))}
+  </div>
+  <footer class="pp-foot">
+    <slot />
+    <span class="pp-air">EZ Air</span>
+  </footer>
+</main>
+
+<script>
+  import "../scripts/board";
+</script>

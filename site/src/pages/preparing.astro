@@ -1,0 +1,21 @@
+---
+import CobaltBoard from "../components/CobaltBoard.astro";
+import Base from "../layouts/Base.astro";
+import { SWITCHES } from "../site-switches";
+
+// The holding screen. While the site is down (SWITCHES.down in site-switches.ts) every page is built as this screen;
+// otherwise it lives only here, to preview, and stays out of search results.
+---
+
+<Base description="eileen-z.com is under construction. Back soon." noindex={!SWITCHES.down}>
+  <CobaltBoard
+    status="Status · preparing"
+    heading="Preparing for departure"
+    messages={[
+      ["PREPARING", "FOR DEPARTURE"],
+      ["GATE OPENS", "SHORTLY"],
+    ]}
+  >
+    <p class="mono">eileen-z.com is under construction. Back soon.</p>
+  </CobaltBoard>
+</Base>

@@ -1,0 +1,12 @@
+---
+import { PROJECTS } from "../data/projects";
+import { ticketHTML } from "../lib/tickets";
+
+// one slot per project; --i is its place in the row, from which global.css works out where it lies at any width
+---
+
+<div class="deck" id="deck">
+  {PROJECTS.map((p, i) => (
+    <div class="dslot" style={`--i:${i}`} set:html={ticketHTML(p)} />
+  ))}
+</div>

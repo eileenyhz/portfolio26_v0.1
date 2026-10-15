@@ -1,0 +1,51 @@
+---
+// The landing intro: a plane crosses the blue screen leaving a line; WELCOME ABOARD rises above it and EZ AIR drops below;
+// then the screen opens along the line. Click or any key skips it; it plays once per visit and never with reduced motion.
+---
+
+<div class="intro" aria-hidden="true">
+  <div class="in-half in-top">
+    <span class="in-word">Welcome aboard</span>
+  </div>
+  <div class="in-half in-bot">
+    <span class="in-word">EZ Air</span>
+  </div>
+  <i class="in-line"></i>
+  <svg class="in-plane" viewBox="0 0 48 48">
+    <path d="M45 24l-8-3H27L19 9h-4l5 12H11l-4-5H4l2 8-2 8h3l4-5h9l-5 12h4l8-12h10z"></path>
+  </svg>
+</div>
+
+<style is:global>
+  .intro-seen .intro {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .intro {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { playIntro } from "../scripts/intro";
+  playIntro();
+</script>
+
+<!-- The cover must never stay: without scripts it is hidden, and if the intro's script did not start by the time the page
+     has loaded (it failed to load, or threw), it is removed. -->
+<noscript>
+  <style>
+    .intro {
+      display: none;
+    }
+  </style>
+</noscript>
+<script is:inline>
+  addEventListener("load", function () {
+    setTimeout(function () {
+      var el = document.querySelector(".intro");
+      if (el && !el.hasAttribute("data-playing")) el.remove();
+    }, 600);
+  });
+</script>

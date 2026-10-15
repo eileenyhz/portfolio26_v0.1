@@ -1,0 +1,42 @@
+---
+import Header from "../components/Header.astro";
+import { pad } from "../lib/format";
+import { BCLIP, cardHTML } from "../lib/wallet";
+import { WALLET } from "../data/wallet";
+import WipNote from "../components/WipNote.astro";
+import Base from "../layouts/Base.astro";
+import { SWITCHES } from "../site-switches";
+---
+
+<Base title="Playground · Eileen Zhang" description="Side projects, experiments and commissions by Eileen Zhang.">
+  <main class="stage">
+    <div class:list={["pg", { wip: SWITCHES.wip }]}>
+      <Header variant="page" current="playground" />
+      <div class="page" inert={SWITCHES.wip}>
+        <div class="page-h">
+          <h1 data-flap="PLAYGROUND">Playground</h1>
+          <p>
+            Side projects, experiments and commissions. Pick a card: its receipt prints, and the work shows beside it.
+          </p>
+        </div>
+        <div class="wl">
+          <div class="wl-stack" id="wl-stack">
+            <Fragment set:html={WALLET.map(cardHTML).join("")} />
+            <p class="wl-hint mono">{pad(WALLET.length)} cards · pick one</p>
+          </div>
+          <div class="wl-rc">
+            <span class="bclip" set:html={BCLIP} />
+            <div class="rc-paper" id="paper"></div>
+          </div>
+          <section class="wl-file" id="wl-file" aria-label="Selected card"></section>
+        </div>
+      </div>
+      {SWITCHES.wip && <WipNote />}
+    </div>
+  </main>
+  <div class="lb" id="lb" hidden></div>
+</Base>
+
+<script>
+  import "../scripts/wallet-page";
+</script>

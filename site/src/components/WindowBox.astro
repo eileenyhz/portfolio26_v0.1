@@ -1,0 +1,30 @@
+---
+import { chars } from "../lib/format";
+import SkyWindow from "./window/SkyWindow";
+
+// The window and the words around it. Each word is drawn twice: once on the page, and once inside a mask cut to the glass,
+// so the part of the letters over the glass takes the view's colours.
+// The words are off for now (2026-10-14); set this to true to bring them back. The hover script handles either.
+const SHOW_WORDS = false;
+---
+
+<div class="wb">
+  <div class="w-slot">
+    <SkyWindow client:only="react" />
+  </div>
+  {SHOW_WORDS && (
+    <>
+      <div class="w-word w1" aria-hidden="true" set:html={chars("WELCOME")} />
+      <div class="w-word w2" aria-hidden="true" set:html={chars("ABOARD")} />
+      <div class="w-mask" aria-hidden="true">
+        <div class="w-mask-in">
+          <div class="w-word w1" set:html={chars("WELCOME")} />
+          <div class="w-word w2" set:html={chars("ABOARD")} />
+        </div>
+      </div>
+    </>
+  )}
+  <div class="w-tag" aria-hidden="true">
+    <span class="tagt">EZ01 · MTF</span>
+  </div>
+</div>

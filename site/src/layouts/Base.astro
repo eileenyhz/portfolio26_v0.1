@@ -1,0 +1,63 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** The link-preview picture (1200 × 630, from `npm run og`), root-relative. */
+  image?: string;
+  /** Keep this page out of search results. */
+  noindex?: boolean;
+}
+const {
+  title = "Eileen Zhang",
+  description = "Eileen Zhang designs and builds products: AI fashion, games and creative tools.",
+  image = "/og/home.jpg",
+  noindex = false,
+} = Astro.props;
+// the address the visitor asked for, even when the page shown in its place is another (the preparing screen)
+const canonical = new URL(Astro.originPathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Eileen Zhang" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Doto:wght@100..900&family=Jost:wght@200..500&family=Inter+Tight:ital,wght@0,300..800;1,400..600&family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500;600&family=Gochi+Hand&family=Michroma&display=swap"
+    />
+    <!-- the landing intro plays once per visit; hide it before the first paint when it has already played -->
+    <script is:inline>
+      try {
+        if (sessionStorage.getItem("ez-intro") === "seen") document.documentElement.classList.add("intro-seen");
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      import "../scripts/cursor";
+    </script>
+  </body>
+</html>

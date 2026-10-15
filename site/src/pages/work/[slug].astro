@@ -1,0 +1,12 @@
+---
+import type { GetStaticPaths } from "astro";
+import Landing from "../../components/Landing.astro";
+import { PROJECTS } from "../../data/projects";
+
+// one page per case study, so each has its own link and preview; it opens over the landing
+export const getStaticPaths = (() =>
+  PROJECTS.map((p) => ({ params: { slug: p.slug }, props: { project: p } }))) satisfies GetStaticPaths;
+const { project } = Astro.props;
+---
+
+<Landing open={project} />

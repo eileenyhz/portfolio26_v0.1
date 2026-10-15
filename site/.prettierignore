@@ -1,0 +1,12 @@
+dist
+dist-e2e
+node_modules
+.astro
+public
+
+# kept compact on purpose: one line per project, case-study step, wallet card or CSS rule, so each reads as a table
+src/data/projects.ts
+src/data/case-studies.ts
+src/data/wallet.ts
+src/data/views.ts
+src/styles/global.css

@@ -1,0 +1,66 @@
+---
+interface Props {
+  /** The landing's header floats over the stage; other pages use a sticky bar in the same place. */
+  variant: "landing" | "page";
+  current: "home" | "playground" | "about";
+}
+const { variant, current } = Astro.props;
+const links = [
+  { href: "/", label: "Selected work", id: "home" },
+  { href: "/playground/", label: "Playground", id: "playground" },
+  { href: "/about/", label: "About", id: "about" },
+] as const;
+---
+
+<div class={variant === "landing" ? "hd" : "pg-bar"} data-menu>
+  <a class="hd-logo" href="/" data-replay aria-label="Eileen Zhang, replay the landing">
+    Eileen Zhang<sup>©26</sup>
+  </a>
+  <!-- phones fold the links into a menu; elsewhere this button is hidden -->
+  <button class="hd-menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-nav"></button>
+  <nav id="site-nav" class={variant === "landing" ? undefined : "pg-nav"} aria-label="Main">
+    {links.map((l) => (
+      <a href={l.href} aria-current={l.id === current ? "page" : undefined}>
+        {l.label}
+      </a>
+    ))}
+  </nav>
+</div>
+
+<script>
+  // the name in the corner plays the landing intro again
+  document.querySelectorAll("[data-replay]").forEach((a) =>
+    a.addEventListener("click", () => {
+      try {
+        sessionStorage.removeItem("ez-intro");
+      } catch {
+        /* storage blocked: the intro simply plays as on a first visit */
+      }
+    }),
+  );
+
+  // phones: the menu button unfolds the links over the page, and anything that leaves them folds them again
+  document.querySelectorAll<HTMLElement>("[data-menu]").forEach((bar) => {
+    const button = bar.querySelector<HTMLButtonElement>(".hd-menu");
+    if (!button) return;
+    const isOpen = () => bar.classList.contains("menu-open");
+    const set = (open: boolean) => {
+      bar.classList.toggle("menu-open", open);
+      button.setAttribute("aria-expanded", String(open));
+    };
+    button.addEventListener("click", () => set(!isOpen()));
+    bar.addEventListener("focusout", (e) => {
+      if (isOpen() && !bar.contains(e.relatedTarget as Node | null)) set(false);
+    });
+    addEventListener("keydown", (e) => {
+      if (e.key !== "Escape" || !isOpen()) return;
+      set(false);
+      button.focus();
+    });
+    matchMedia("(min-width: 640px)").addEventListener("change", (e) => {
+      if (e.matches) set(false);
+    });
+    // a page restored from the back-forward cache comes back folded
+    addEventListener("pageshow", () => set(false));
+  });
+</script>

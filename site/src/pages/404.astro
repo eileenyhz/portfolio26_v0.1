@@ -1,0 +1,21 @@
+---
+import CobaltBoard from "../components/CobaltBoard.astro";
+import Base from "../layouts/Base.astro";
+
+// Any address that does not exist (GitHub Pages serves this file as 404.html).
+---
+
+<Base title="Flight not found · Eileen Zhang" description="This page does not exist." noindex>
+  <CobaltBoard
+    status="Gate 404"
+    heading="Flight not found"
+    messages={[
+      ["FLIGHT", "NOT FOUND"],
+      ["GATE", "404"],
+    ]}
+  >
+    <a class="pp-home" href="/">
+      ← All flights
+    </a>
+  </CobaltBoard>
+</Base>

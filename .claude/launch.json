@@ -3,9 +3,71 @@
   "configurations": [
     {
       "name": "portfolio",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "4173"],
+      "runtimeExecutable": "/Users/eileenzhang/.local/node/bin/node",
+      "runtimeArgs": [
+        ".claude/static-server.mjs",
+        "4173"
+      ],
       "port": 4173
+    },
+    {
+      "name": "site",
+      "runtimeExecutable": "/Users/eileenzhang/.local/node/bin/node",
+      "runtimeArgs": [
+        "site/node_modules/astro/bin/astro.mjs",
+        "dev",
+        "--root",
+        "site",
+        "--port",
+        "4321"
+      ],
+      "port": 4321
+    },
+    {
+      "name": "site (down)",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "SITE_DOWN=1",
+        "/Users/eileenzhang/.local/node/bin/node",
+        "site/node_modules/astro/bin/astro.mjs",
+        "dev",
+        "--root",
+        "site",
+        "--port",
+        "4324",
+        "--ignore-lock"
+      ],
+      "port": 4324
+    },
+    {
+      "name": "site (notes on)",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "SITE_WIP=1",
+        "/Users/eileenzhang/.local/node/bin/node",
+        "site/node_modules/astro/bin/astro.mjs",
+        "dev",
+        "--root",
+        "site",
+        "--port",
+        "4326",
+        "--ignore-lock"
+      ],
+      "port": 4326
+    },
+    {
+      "name": "site (launch check)",
+      "runtimeExecutable": "/Users/eileenzhang/.local/node/bin/node",
+      "runtimeArgs": [
+        "site/node_modules/astro/bin/astro.mjs",
+        "preview",
+        "--root",
+        "site",
+        "--port",
+        "4400",
+        "--ignore-lock"
+      ],
+      "port": 4400
     }
   ]
 }
