@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { PALETTES } from "../../data/views";
 import type { ViewId } from "../../data/types";
-import { $paused, $view } from "../../stores/window";
+import { $paused, $ready, $view } from "../../stores/window";
 import { F, GLASS, PX, applyState, buildWindow, mixState, toState, type SkyState } from "./frame";
 
 // colours are given as authored, with no colour management or tone mapping, so they match the design exactly. The
@@ -17,6 +17,8 @@ const STATES = Object.fromEntries(Object.entries(PALETTES).map(([id, p]) => [id,
 >;
 const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
 const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+// the cloud sky is the costly part to draw, and it drifts slowly: redrawn at most 30 times a second, it looks the same
+const SKY_EVERY = 1000 / 30;
 
 function WindowScene() {
   const { camera, size } = useThree();
@@ -70,6 +72,7 @@ function WindowScene() {
 
   const start = useRef(performance.now());
   const frame = useRef(0);
+  const skyAt = useRef(-1e9); // when the sky was last drawn
   // priority 1: this loop does the rendering, the sky into its target, then the window
   useFrame(({ gl, scene, camera: cam }) => {
     if (paused) return;
@@ -89,22 +92,31 @@ function WindowScene() {
     parts.inner.position.set(2.5 * p.sx, -2 * p.sy, 0);
     parts.seal.position.x = F.seal + 3 * p.sx;
     const u = parts.sky.uniforms;
-    u.uTime.value = reduced() ? 30 : 30 + (now - start.current) / 1000;
-    u.uFrame.value = frame.current++ % 64;
+    // the sky redraws at most 30 times a second (and at once while it changes colour); the glass and frame every frame,
+    // so the glass still follows the pointer smoothly
+    if (now - skyAt.current >= SKY_EVERY - 2 || k < 1) {
+      skyAt.current = now;
+      u.uTime.value = reduced() ? 30 : 30 + (now - start.current) / 1000;
+      u.uFrame.value = frame.current++ % 64;
+      gl.setRenderTarget(parts.sky.target);
+      gl.render(parts.sky.scene, parts.sky.camera);
+      gl.setRenderTarget(null);
+    }
     parts.glassUniforms.uTime.value = now / 1000;
-    gl.setRenderTarget(parts.sky.target);
-    gl.render(parts.sky.scene, parts.sky.camera);
-    gl.setRenderTarget(null);
     gl.render(scene, cam);
+    if (!$ready.get()) $ready.set(true);
   }, 1);
 
   return <primitive object={parts.root} />;
 }
 
-/** The airplane window on the landing: a live cloud sea through the glass; hovering a ticket eases it into that project's colours. */
+/**
+ * The airplane window on the landing: a live cloud sea through the glass; hovering a ticket eases it into that project's
+ * colours. Drawn at most 1.5 device pixels per pixel: on 2x screens that is 44% fewer pixels, which the eye does not miss.
+ */
 export default function SkyWindow() {
   return (
-    <Canvas legacy flat linear dpr={[1, 2]} gl={{ antialias: true, alpha: true, stencil: true }} aria-hidden="true">
+    <Canvas legacy flat linear dpr={[1, 1.5]} gl={{ antialias: true, alpha: true, stencil: true }} aria-hidden="true">
       <WindowScene />
     </Canvas>
   );

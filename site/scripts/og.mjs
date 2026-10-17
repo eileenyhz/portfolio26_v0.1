@@ -46,7 +46,15 @@ try {
   await page.clock.pauseAt(1000);
   await page.goto(BASE + "/", { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
-  for (let t = 0; t < 2500; t += 50) await page.clock.fastForward(50); // small steps, so GSAP never sees a lag
+  // small steps, so GSAP never sees a lag: on until the plane has crossed (it waits for the window to start first), then
+  // a second more, by when both words are in and the screen has not begun to open
+  const step = () => page.clock.fastForward(50);
+  for (let t = 0; t < 6000; t += 50) {
+    await step();
+    const x = await page.locator(".in-plane").evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
+    if (x > 1200) break;
+  }
+  for (let t = 0; t < 1000; t += 50) await step();
   // and the four tickets laid over it, resting white along the bottom edge as on a desktop, showing down to their roles:
   // at feed size the cobalt catches the eye and the tickets say it is a designer's work
   await page.addStyleTag({

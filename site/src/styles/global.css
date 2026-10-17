@@ -38,7 +38,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   --tk-w: max(16cqw, min(38cqw, 160px)); }
 .hd { position: absolute; top: 4.6cqh; left: 3.4cqw; right: 3.4cqw; display: flex; justify-content: space-between; align-items: baseline; z-index: 20; }
 .hd nav, .pg-nav { display: flex; gap: 2.4cqw; font-size: clamp(11px, 1cqw, 13px); font-weight: 500; }   /* sentence case, as the reference shows it */
-.hd nav a, .pg-nav a { color: var(--mute); text-decoration: none; transition: color .2s; display: flex; gap: .4em; align-items: baseline; padding: 12px .5em; margin: -12px -.5em; }   /* the padding is an invisible margin to aim at: the plane's nose need not land on the words */
+.hd nav a, .pg-nav a { color: var(--mute); text-decoration: none; transition: color .2s; display: flex; gap: .4em; align-items: baseline; padding: 12px .5em; margin: -12px -.5em; }   /* the padding is an invisible margin to aim at: a click need not land on the words */
 .hd nav a::before, .pg-nav a::before { content: "●"; content: "●" / ""; font-size: .6em; opacity: 0; }   /* decorative: left out of the link name */
 .hd nav a:hover, .hd nav a[aria-current="page"], .pg-nav a:hover, .pg-nav a[aria-current="page"] { color: var(--ink); }
 .hd nav a[aria-current="page"]::before, .pg-nav a[aria-current="page"]::before { opacity: 1; }
@@ -55,22 +55,24 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .w-word .ch { display: inline-block; will-change: transform; }
 .w1 { left: calc(var(--ws) * -.828); top: calc(var(--wh) * -.035); }
 .w2 { right: calc(var(--ws) * -.805); bottom: calc(var(--wh) * .02); }
-.w-tag { position: absolute; z-index: 5; left: calc(var(--ws) * .78); top: calc(var(--wh) * .21); height: calc(var(--wh) * .072); min-width: calc(var(--ws) * .66); background: var(--ink); color: #fff; padding: 0 .9em; display: flex; align-items: center; justify-content: space-between; gap: 1em; font-family: var(--f-mono); font-size: clamp(10px, calc(var(--wh) * .034), 13px); letter-spacing: .02em; white-space: nowrap; clip-path: inset(0 100% 0 0); transition: clip-path .5s var(--ease); }
-.w-tag.on { clip-path: inset(0 0 0 0); }
+.w-tag { position: absolute; z-index: 5; left: calc(var(--ws) * .78); top: calc(var(--wh) * .21); height: calc(var(--wh) * .072); min-width: calc(var(--ws) * .66); background: var(--ink); color: #fff; padding: 0 .9em; display: flex; align-items: center; justify-content: space-between; gap: 1em; font-family: var(--f-mono); font-size: clamp(10px, calc(var(--wh) * .034), 13px); letter-spacing: .02em; white-space: nowrap; clip-path: inset(0 100% 0 0); transition: clip-path .15s var(--out); }
+.w-tag.on { clip-path: inset(0 0 0 0); transition-duration: .25s; }
 
 /* ---------- boarding pass: the stub you keep, torn along the perforation on its left edge. Inside, the ticket wireframe
    (type and date, name and mark, the role tab, description, preview); the stub carries the flight. White until hovered ---------- */
 .deck { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
 /* a row centred on the screen, 1.6% of the width apart, each ticket showing its top quarter (--pk) above the bottom edge.
    left and top are the same properties in every layout, so a ticket glides from one layout to the next */
-.dslot { --tw: var(--tk-w); --th: calc(var(--tk-w) * 1.7); --pk: calc(var(--th) * .235); --up: min(calc(var(--th) * .72), 31cqh); position: absolute; left: calc(50cqw + (var(--i) - 2) * (var(--tw) + 1.6cqw) + .8cqw); top: calc(100cqh - var(--pk)); rotate: var(--r, 0deg); pointer-events: auto; transition: left .5s var(--ease), top .5s var(--ease), translate .6s var(--spring), rotate .45s; filter: drop-shadow(0 1px 1px rgb(0 0 0 / .14)) drop-shadow(0 -2px 12px rgb(0 0 0 / .12)); }
-.dslot:hover, .dslot:focus-within { translate: 0 calc(var(--pk) - var(--up)); rotate: 0deg; z-index: 6; }
-.tk { --nr: calc(var(--tw) * .045); --pp: calc(var(--tw) * .062); position: relative; display: block; width: var(--tw); height: var(--th); container-type: size; isolation: isolate; overflow: hidden; border-radius: 0 6.5% 6.5% 0 / 0 3.8% 3.8% 0; background: var(--paper); color: var(--ink); text-align: left; transition: color .4s;
+.dslot { --tw: var(--tk-w); --th: calc(var(--tk-w) * 1.7); --pk: calc(var(--th) * .235); --up: min(calc(var(--th) * .72), 31cqh); position: absolute; left: calc(50cqw + (var(--i) - 2) * (var(--tw) + 1.6cqw) + .8cqw); top: calc(100cqh - var(--pk)); rotate: var(--r, 0deg); pointer-events: auto; transition: left .5s var(--ease), top .5s var(--ease), translate .15s var(--out), rotate .15s var(--out); filter: drop-shadow(0 1px 1px rgb(0 0 0 / .12)) drop-shadow(0 -1px 5px rgb(0 0 0 / .08)); }
+/* hovering: the ticket rises in a quarter of a second, with no overshoot; letting go is quicker still, so nothing lingers */
+.dslot:hover, .dslot:focus-within { translate: 0 calc(var(--pk) - var(--up)); rotate: 0deg; z-index: 6; transition-duration: .5s, .5s, .25s, .25s; }
+.tk { --nr: calc(var(--tw) * .045); --pp: calc(var(--tw) * .062); position: relative; display: block; width: var(--tw); height: var(--th); container-type: size; isolation: isolate; overflow: hidden; border-radius: 0 6.5% 6.5% 0 / 0 3.8% 3.8% 0; background: var(--paper); color: var(--ink); text-align: left; transition: color .15s;
   -webkit-mask: radial-gradient(circle calc(var(--pp) * .28) at 0 50%, #0000 96%, #000) 0 50% / 100% var(--pp) repeat-y, radial-gradient(circle var(--nr) at 100% 75.5%, #0000 97%, #000); -webkit-mask-composite: source-in;
   mask: radial-gradient(circle calc(var(--pp) * .28) at 0 50%, #0000 96%, #000) 0 50% / 100% var(--pp) repeat-y, radial-gradient(circle var(--nr) at 100% 75.5%, #0000 97%, #000); mask-composite: intersect; }
-.tk::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--t1); transform: scaleY(0); transform-origin: 50% 0; transition: transform .55s var(--ease); }
-.tk.on { color: var(--ton); }
-.tk.on::before { transform: none; }
+.tk::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--t1); transform: scaleY(0); transform-origin: 50% 0; transition: transform .15s var(--out); }
+/* the colours fill in over .22 s and drain in .15 s */
+.tk.on { color: var(--ton); transition-duration: .22s; }
+.tk.on::before { transform: none; transition-duration: .22s; }
 .tk-hd { position: absolute; left: 7.4cqw; right: 5.8cqw; top: 2.1cqh; display: flex; justify-content: space-between; gap: 3cqw; font-family: var(--f-mono); font-size: 5.5cqw; line-height: 1; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
 .tk-hd::after { content: ""; position: absolute; left: -2.6cqw; right: -4.4cqw; top: 4.4cqh; border-top: 1px dashed currentColor; opacity: .6; }
 .tk-name { position: absolute; left: 7.6cqw; top: 8.3cqh; font-family: var(--f-dot); font-weight: 900; font-size: 13.7cqw; line-height: 1.02; letter-spacing: 0; text-transform: uppercase; white-space: nowrap; }
@@ -78,14 +80,14 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .tk-mark .f { fill: currentColor; stroke: none; }
 .tk-rule { position: absolute; left: 7.6cqw; right: 5cqw; top: calc(29.7cqh - var(--nup, 0cqh)); border-top: 1px solid currentColor; }
 .tk-role { position: absolute; left: 8cqw; top: calc(26.1cqh - var(--nup, 0cqh)); height: 3.6cqh; min-width: 56cqw; padding: 0 2.6cqw; display: flex; align-items: center; background: currentColor; font-family: var(--f-mono); font-size: max(8px, 4.6cqw); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
-.tk-role span { color: var(--paper); transition: color .4s; }
-.tk.on .tk-role span { color: var(--t1); }
+.tk-role span { color: var(--paper); transition: color .15s; }
+.tk.on .tk-role span { color: var(--t1); transition-duration: .22s; }
 .tk-desc { position: absolute; left: 8.4cqw; right: 8.8cqw; top: calc(32.6cqh - var(--nup, 0cqh)); font-size: max(10px, 5.8cqw); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.tk-prev { position: absolute; left: 9cqw; right: 6.9cqw; top: calc(45.1cqh - var(--nup, 0cqh)); height: calc(24.7cqh + var(--nup, 0cqh)); border-radius: 1.4cqw; filter: grayscale(1); opacity: .5; transition: filter .5s .1s, opacity .5s .1s; }
-.tk.on .tk-prev { filter: none; opacity: 1; }
-.tk-stub { position: absolute; left: 0; right: 0; bottom: 0; height: 24.5cqh; transition: background-color .4s, color .4s; }
+.tk-prev { position: absolute; left: 9cqw; right: 6.9cqw; top: calc(45.1cqh - var(--nup, 0cqh)); height: calc(24.7cqh + var(--nup, 0cqh)); border-radius: 1.4cqw; filter: grayscale(1); opacity: .5; transition: filter .15s, opacity .15s; }
+.tk.on .tk-prev { filter: none; opacity: 1; transition-duration: .22s; }
+.tk-stub { position: absolute; left: 0; right: 0; bottom: 0; height: 24.5cqh; transition: background-color .15s, color .15s; }
 .tk-stub::after { content: ""; position: absolute; left: 5cqw; right: 0; top: -1px; border-top: 1.5px dashed currentColor; opacity: .55; }
-.tk.on .tk-stub { background-color: var(--t2); color: var(--son); }
+.tk.on .tk-stub { background-color: var(--t2); color: var(--son); transition-duration: .22s; }
 .st-f { position: absolute; inset: 4cqw 6cqw 4.4cqw 8.4cqw; display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 2cqw; }
 .sf-h { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 3.6cqw; letter-spacing: .14em; line-height: 1.2; text-transform: uppercase; }
 .sf-codes { display: flex; align-items: center; gap: 2.6cqw; font-family: var(--f-disp); font-weight: 800; font-stretch: 112%; font-size: 10.5cqw; line-height: 1; }
@@ -468,18 +470,6 @@ html:has(.pp), body:has(.pp) { background: #1f3ccf; }
 .pp-home:hover { border-bottom-color: #ffffff; }
 .pp-home:focus-visible { outline: 2px solid #ffffff; outline-offset: 4px; }
 .pp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-/* ---------- the pointer (src/scripts/cursor.ts): the intro's plane, coloured by what is under it ---------- */
-html.c-plane, html.c-plane * { cursor: none !important; }
-.cur-trail, .cur-plane, .cur-tag { position: fixed; left: 0; top: 0; z-index: 1000; pointer-events: none; }
-.cur-trail { display: none; width: 100%; height: 100%; }
-.cur-trail.on { display: block; }
-.cur-plane { width: 24px; height: 24px; transform-origin: 0 0; visibility: hidden; overflow: visible; }
-.cur-plane.on { visibility: visible; }
-/* white in difference, then cobalt in screen: cobalt over white, white over ink, a light contrast over colour */
-.cur-diff { mix-blend-mode: difference; fill: #ffffff; }
-.cur-screen { mix-blend-mode: screen; fill: #1f3ccf; }
-.cur-tag { z-index: 1001; padding: 3px 7px; background: var(--ink); color: #ffffff; font: 500 10px/1.2 var(--f-mono); letter-spacing: .08em; visibility: hidden; }
-.cur-tag.on { visibility: visible; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: .01s !important; transition-delay: 0s !important; }
 }

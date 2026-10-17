@@ -1,9 +1,15 @@
 import gsap from "gsap";
+import { $ready } from "../stores/window";
+
+/** The longest the plane waits for the window to start (a page whose window fails still gets its intro). */
+const WAIT_MAX = 1500;
 
 /**
  * A plane crosses the blue screen leaving a line; once it has crossed, WELCOME ABOARD rises above the line and EZ AIR drops
  * below it; then the screen opens along the line. Plays once per visit (the name in the corner replays it); click or any key
- * skips it; reduced motion never shows it.
+ * skips it; reduced motion never shows it. The cover shows at once, but the plane takes off only once the window has
+ * drawn its first frame (at most WAIT_MAX): the page's start-up, the heaviest work it does, then happens under the still
+ * cover instead of stuttering the flight.
  */
 export function playIntro(): void {
   const el = document.querySelector<HTMLElement>(".intro");
@@ -38,6 +44,7 @@ export function playIntro(): void {
     if (shown >= 8000) tl.progress(1);
   }, 500);
   const tl = gsap.timeline({
+    paused: true,
     onComplete: () => {
       clearInterval(guard);
       el.remove();
@@ -60,6 +67,16 @@ export function playIntro(): void {
     .to(line, { opacity: 0, duration: 0.25 }, 2.7)
     .to(top, { yPercent: -100, duration: 1, ease: "expo.inOut" }, 2.7)
     .to(bot, { yPercent: 100, duration: 1, ease: "expo.inOut" }, 2.7);
+  const fly = () => {
+    if (!tl.paused() || tl.progress() > 0) return;
+    unsubscribe();
+    clearTimeout(timeout);
+    tl.play();
+  };
+  const timeout = setTimeout(fly, WAIT_MAX);
+  const unsubscribe = $ready.subscribe((ready) => {
+    if (ready) queueMicrotask(fly);
+  });
   const skip = () => tl.progress(1);
   el.addEventListener("click", skip);
   addEventListener("keydown", skip, { once: true });

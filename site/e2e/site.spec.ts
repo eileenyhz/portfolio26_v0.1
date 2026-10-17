@@ -66,6 +66,26 @@ test.describe("intro", () => {
     expect(await page.evaluate(() => sessionStorage.getItem("ez-intro"))).toBeNull();
   });
 
+  test("holds the plane until the window has drawn, so the page's start-up never stutters the flight", async ({
+    page,
+  }) => {
+    await page.route(/SkyWindow.*\.js$/, async (route) => {
+      await new Promise((r) => setTimeout(r, 1200)); // a slow machine: the window takes a while to start
+      await route.continue();
+    });
+    await page.goto("/");
+    await page.waitForTimeout(700);
+    const x = await page.locator(".in-plane").evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41);
+    expect(x).toBeLessThan(-40); // still waiting off the left edge
+    await expect(page.locator(".intro")).toHaveCount(0, { timeout: 10_000 });
+  });
+
+  test("flies anyway if the window never starts", async ({ page }) => {
+    await page.route(/SkyWindow.*\.js$/, (route) => route.abort());
+    await page.goto("/");
+    await expect(page.locator(".intro")).toHaveCount(0, { timeout: 10_000 });
+  });
+
   test("a click skips it", async ({ page }) => {
     await page.goto("/");
     await page.locator(".intro").click();
@@ -338,96 +358,34 @@ test.describe("preparing screen", () => {
   });
 });
 
-test.describe("the plane pointer", () => {
+test.describe("pointer and hover", () => {
   test.beforeEach(({ page }) => skipIntro(page));
 
-  test("replaces the pointer with the plane, its nose exactly where the pointer is", async ({ page }) => {
+  test("the site keeps the system pointer", async ({ page }) => {
     await page.goto("/");
     await page.mouse.move(300, 300);
     await page.mouse.move(420, 380, { steps: 10 });
-    await expect(page.locator("html")).toHaveClass(/\bc-plane\b/);
-    const planes = page.locator(".cur-plane.on");
-    await expect(planes).toHaveCount(2);
-    // the nose (22.5, 12 in the plane's box) must land on the pointer
-    const nose = await planes.first().evaluate((el) => {
-      const m = new DOMMatrix(getComputedStyle(el).transform);
-      return m.transformPoint(new DOMPoint(22.5, 12));
-    });
-    expect(Math.abs(nose.x - 420)).toBeLessThan(0.5);
-    expect(Math.abs(nose.y - 380)).toBeLessThan(0.5);
+    await expect(page.locator("html")).not.toHaveClass(/\bc-plane\b/);
+    await expect(page.locator(".cur-plane, .cur-trail")).toHaveCount(0);
+    await expect(page.locator(".deck .tk").first()).toHaveCSS("cursor", "pointer");
   });
 
-  test("takes its colour from what is under it (white in difference, cobalt in screen)", async ({ page }) => {
+  test("a ticket answers a hover quickly, and lets go quicker", async ({ page }) => {
     await page.goto("/");
-    await page.mouse.move(300, 300);
-    await expect(page.locator(".cur-plane.cur-diff")).toHaveCSS("mix-blend-mode", "difference");
-    await expect(page.locator(".cur-plane.cur-screen")).toHaveCSS("mix-blend-mode", "screen");
-  });
-
-  test("holds its heading through small adjustments", async ({ page }) => {
-    await page.goto("/");
-    await page.mouse.move(300, 300);
-    await page.mouse.move(520, 300, { steps: 6 }); // a deliberate move to the right
-    await page.waitForTimeout(400);
-    const heading = () =>
-      page.locator(".cur-plane.cur-screen").evaluate((el) => {
-        const m = new DOMMatrix(getComputedStyle(el).transform);
-        return (Math.atan2(m.b, m.a) * 180) / Math.PI;
-      });
-    expect(Math.abs(await heading())).toBeLessThan(5);
-    for (const x of [517, 514, 511]) {
-      await page.mouse.move(x, 302); // nudges to the left, a moment apart
-      await page.waitForTimeout(200);
-    }
-    expect(Math.abs(await heading())).toBeLessThan(5);
-  });
-
-  test("stays where it was across a click on the nav, before the mouse moves again", async ({ page }) => {
-    await page.goto("/");
-    const link = page.getByRole("link", { name: "Playground" });
-    const box = await link.boundingBox();
-    if (!box) throw new Error("no Playground link");
-    await page.mouse.move(box.x - 120, box.y + 60);
-    await link.click();
-    await expect(page).toHaveURL(/\/playground\/$/);
-    await expect(page.locator(".cur-plane.on")).toHaveCount(2);
-    await expect(page.locator("html")).toHaveClass(/\bc-plane\b/);
-    const nose = await page.locator(".cur-plane.cur-screen").evaluate((el) => {
-      const m = new DOMMatrix(getComputedStyle(el).transform);
-      return m.transformPoint(new DOMPoint(22.5, 12));
-    });
-    expect(Math.abs(nose.x - (box.x + box.width / 2))).toBeLessThan(2);
-    expect(Math.abs(nose.y - (box.y + box.height / 2))).toBeLessThan(2);
-  });
-
-  test("draws in toward its nose over something to click", async ({ page }) => {
-    await page.goto("/");
-    const plane = page.locator(".cur-plane.cur-screen");
-    const scale = () =>
-      plane.evaluate((el) => {
-        const m = new DOMMatrix(getComputedStyle(el).transform);
-        return Math.hypot(m.a, m.b);
-      });
-    await page.mouse.move(300, 300);
-    await page.mouse.move(320, 330, { steps: 4 });
-    await expect.poll(scale).toBeGreaterThan(0.99);
-    const box = await page.getByRole("link", { name: "Playground" }).boundingBox();
-    if (!box) throw new Error("no Playground link");
-    const [x, y] = [box.x + box.width / 2, box.y + box.height / 2];
-    await page.mouse.move(x, y, { steps: 8 });
-    await expect.poll(scale).toBeLessThan(0.85);
-    const nose = await plane.evaluate((el) =>
-      new DOMMatrix(getComputedStyle(el).transform).transformPoint(new DOMPoint(22.5, 12)),
-    );
-    expect(Math.abs(nose.x - x)).toBeLessThan(0.5);
-    expect(Math.abs(nose.y - y)).toBeLessThan(0.5);
-  });
-
-  test("says BOARD over a ticket", async ({ page }) => {
-    await page.goto("/");
-    await page.locator(".deck .tk").first().hover();
-    await expect(page.locator(".cur-tag")).toHaveText("BOARD");
-    await expect(page.locator(".cur-tag")).toBeVisible();
+    const slot = page.locator(".deck .dslot").first();
+    // the longest transition running on the ticket (and its parts) just after the pointer arrives, then just after it leaves
+    const longest = () =>
+      slot.evaluate((el) =>
+        Math.max(0, ...el.getAnimations({ subtree: true }).map((a) => Number(a.effect?.getTiming().duration ?? 0))),
+      );
+    await slot.locator(".tk").hover({ position: { x: 20, y: 10 } });
+    const enter = await longest();
+    expect(enter).toBeGreaterThan(0);
+    expect(enter).toBeLessThanOrEqual(300);
+    await page.mouse.move(700, 300);
+    const leave = await longest();
+    expect(leave).toBeGreaterThan(0);
+    expect(leave).toBeLessThanOrEqual(200);
   });
 });
 
