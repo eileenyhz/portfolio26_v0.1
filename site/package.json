@@ -17,7 +17,6 @@
     "check": "astro check",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "compare:s1": "PARITY_TARGET=s1 playwright test -c playwright.parity.config.ts --update-snapshots=all && playwright test -c playwright.parity.config.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "astro": "astro"

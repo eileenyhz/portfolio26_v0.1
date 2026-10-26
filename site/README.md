@@ -1,43 +1,26 @@
-# Astro Starter Kit: Minimal
+# eileen-z.com
+
+Eileen Zhang's portfolio, built with [Astro](https://astro.build): a landing with a live airplane window (React Three
+Fiber) and one boarding-pass ticket per project, a case study per project at `/work/{slug}/`, and the Playground and
+About pages. Published to GitHub Pages by `.github/workflows/site.yml`.
+
+Node 22. From this folder:
 
 ```sh
-npm create astro@latest -- --template minimal
+npm ci              # install
+npm run dev         # http://localhost:4321
+npm run check       # types
+npm test            # unit tests (Vitest)
+npm run test:e2e    # browser tests (Playwright), against their own build with the switches off
+npm run build       # the site, into dist/
+npm run format      # Prettier
+npm run images      # media/ originals -> public/img/*.webp
+npm run og          # link-preview images, from the built site -> public/og/
+npm run icons       # favicon and home-screen icon
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- Content: `src/data/` (projects, case studies, Playground cards, window views).
+- Switches: `src/site-switches.ts` (`down`: every page shows the preparing screen; `wip`: the sticky note over
+  Playground and About), or `SITE_DOWN=1` / `SITE_WIP=0` for one build.
+- Publishing: push to `main`, then Actions → Site → Run workflow with "Deploy" ticked. Every check runs first.
+- Decisions and history: `../HANDOFF.md`. The site before this rebuild is the `v1-live` tag.

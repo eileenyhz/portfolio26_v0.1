@@ -1,4 +1,4 @@
-// A plain static file server for the repo's HTML pages (portfolio-s1.html and the labs), used by the "portfolio" entry in
+// A plain static file server for the repo's local HTML pages (the labs and site-compare.html), used by the "portfolio" entry in
 // launch.json. Node rather than `python3 -m http.server`: the system Python is not allowed into ~/Desktop when started
 // from the desktop app, and fails before serving anything. Usage: node .claude/static-server.mjs [port]
 import { createReadStream, existsSync, readdirSync, statSync } from "node:fs";
